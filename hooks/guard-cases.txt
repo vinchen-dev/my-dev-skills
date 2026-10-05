@@ -1,0 +1,149 @@
+# Guard cases: <expected exit><TAB><command>. 2 = blocked, 0 = allowed. Run with `npm run test:guard`.
+
+# block: force push
+2	git push --force
+2	git push -f origin main
+2	git push -fu origin main
+2	git push --force-with-lease origin feat/x
+2	git push origin main --force
+2	git -C /tmp/x push --force
+2	git -c core.pager=cat push --force origin main
+2	git status && git push --force
+2	sh -c "git push --force"
+
+# block: git reset --hard
+2	git reset --hard
+2	git reset --hard HEAD~1
+2	git reset HEAD~1 --hard
+2	git reset -q --hard
+2	git -C x reset --hard
+
+# block: git clean -f
+2	git clean -f
+2	git clean -fd
+2	git clean -xdf
+2	git clean -d --force
+2	git -C x clean -f
+
+# block: git checkout .
+2	git checkout .
+2	git checkout -- .
+2	git checkout ./
+2	git checkout -q .
+2	git checkout HEAD -- .
+2	git checkout .; npm test
+
+# block: git restore .
+2	git restore .
+2	git restore -- .
+2	git restore --source=HEAD .
+2	git restore --staged --worktree .
+
+# block: git branch -D
+2	git branch -D feat/x
+2	git branch -Df feat/x
+2	git branch -fD feat/x
+
+# block: rm on root, home or parent
+2	rm -rf /
+2	rm -fr ~
+2	rm -rf $HOME
+2	rm -rf ..
+2	rm -rf *
+2	sudo rm -rf /
+
+# block: drop
+2	DROP TABLE users;
+2	drop database x
+2	psql -c "DROP TABLE users"
+
+# block: truncate
+2	TRUNCATE TABLE t
+
+# block: publish
+2	npm publish
+2	yarn publish
+2	pnpm publish
+2	npm -w pkg publish
+2	pnpm -r publish
+2	pnpm --filter pkg publish
+2	yarn npm publish
+
+# block: terraform
+2	terraform apply
+2	terraform destroy -auto-approve
+2	terraform -chdir=infra apply
+
+# allow: pushes the workflow uses
+0	git push
+0	git push -u origin feat/x
+0	git push -u origin hot-f
+0	git push origin HEAD
+0	git -C x push -u origin main
+
+# allow: resets
+0	git reset --soft 3f2a9c1
+0	git reset HEAD file.txt
+0	git reset
+
+# allow: dry-run cleans
+0	git clean -n
+0	git clean -nd
+0	git clean -i
+
+# allow: checkouts
+0	git checkout -b 42-user-auth
+0	git checkout main
+0	git checkout -- src/file.ts
+0	git checkout ./src
+0	git checkout -
+
+# allow: restores
+0	git restore --staged .
+0	git restore src/file.ts
+0	git restore --staged src/a.ts
+
+# allow: branches
+0	git branch -d feat/x
+0	git branch --list
+0	git branch --show-current
+0	git branch -m old new
+
+# allow: deletes inside the repo
+0	rm -rf node_modules
+0	rm -rf ./dist
+0	rm -rf .scratch/tmp
+0	rm -f file.txt
+0	rm -rf dist && npm run build
+
+# allow: sql words that are not the phrase
+0	DROP INDEX idx
+0	cat migrations/001_drop_table.sql
+0	git commit -m "wip: drop-legacy-users-table round 1"
+0	truncate -s 0 file.log
+
+# allow: package scripts
+0	npm run publish
+0	npm run build
+0	npm pack
+0	pnpm -r build
+0	npm -w pkg test
+0	yarn workspace pkg run publish-site
+
+# allow: terraform read-only
+0	terraform plan
+0	terraform -chdir=infra plan
+0	terraform init
+
+# allow: dev-build, dev-ship and dev-explorer commands
+0	git rev-parse HEAD
+0	git commit -m "wip: user-auth round 1"
+0	git status -sb
+0	git diff 3f2a9c1...HEAD --stat
+0	gh pr create --fill
+0	gh issue view 12
+0	git ls-files | xargs wc -l | sort -n | tail -20
+0	git log --name-only -n 50
+0	find . -name "*.ts" | wc -l
+0	npx prettier --write src/foo.ts
+0	npm test

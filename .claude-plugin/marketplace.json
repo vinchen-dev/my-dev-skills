@@ -1,0 +1,28 @@
+{
+  "name": "my-dev-skills",
+  "owner": {
+    "name": "vinchen-dev"
+  },
+  "metadata": {
+    "description": "Plan, verify and build skills that extend Matt Pocock's dev workflow with a plan step, spec verification and an implement → verify → review loop.",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "my-dev-skills",
+      "source": "./",
+      "description": "Plan, verify and build skills that extend Matt Pocock's dev workflow with a plan step, spec verification and an implement → verify → review loop.",
+      "version": "0.1.0",
+      "category": "development"
+    },
+    {
+      "name": "mattpocock-skills",
+      "source": {
+        "source": "github",
+        "repo": "mattpocock/skills"
+      },
+      "description": "Matt Pocock's skills used by this workflow (grill-me, to-spec, tdd, code-review, ...)",
+      "category": "development"
+    }
+  ]
+}

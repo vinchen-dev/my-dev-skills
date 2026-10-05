@@ -1,0 +1,59 @@
+{
+  "name": "my-dev-skills",
+  "version": "0.1.0",
+  "description": "Plan, verify and build skills that extend Matt Pocock's dev workflow with a plan step, spec verification and an implement \u2192 verify \u2192 review loop.",
+  "author": {
+    "name": "vinchen-dev"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vinchen-dev/my-dev-skills"
+  },
+  "bin": {
+    "my-dev-skills": "bin/install.js"
+  },
+  "files": [
+    ".agents",
+    ".claude-plugin",
+    ".codex-plugin",
+    "AGENTS.md",
+    "CHANGELOG.md",
+    "CLAUDE.md",
+    "LICENSE",
+    "README.md",
+    "agents",
+    "bin",
+    "hooks",
+    "scripts",
+    "skills"
+  ],
+  "scripts": {
+    "manifests": "node scripts/build-manifests.js",
+    "validate": "claude plugin validate .",
+    "test:guard": "node scripts/test-guard.js",
+    "prepublishOnly": "npm run manifests && npm run validate && npm run test:guard"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "devSkills": {
+    "displayName": "My Dev Skills",
+    "matt": {
+      "repo": "mattpocock/skills",
+      "marketplaceName": "mattpocock",
+      "pluginName": "mattpocock-skills",
+      "skills": [
+        "grill-me",
+        "to-spec",
+        "to-tickets",
+        "implement",
+        "tdd",
+        "code-review",
+        "diagnosing-bugs",
+        "setup-matt-pocock-skills",
+        "pr"
+      ]
+    }
+  }
+}
