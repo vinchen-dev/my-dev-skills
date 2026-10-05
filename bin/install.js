@@ -3,29 +3,44 @@
 //
 //   npx my-dev-skills init            install or update this plugin for Claude Code and Codex
 //   npx my-dev-skills init --matt     also install or update Matt Pocock's skills
-//   npx my-dev-skills init --link     symlink this checkout in instead of copying or using a marketplace
+//   npx my-dev-skills init --shared   force the ~/.agents copy, even from a checkout
+//   npx my-dev-skills init --link     force linking THIS folder, even without a .git
 //   npx my-dev-skills uninstall       remove this plugin (leaves Matt's skills alone)
+//   --claude, --codex                 install for just that tool, skipping the question
+//   --yes, -y                         take every detected tool, skipping the question
 //   --dry-run                         show what would run, without running it
 //   --help, -h                        this text
 //
-// When a tool's own plugin commands aren't available (no CLI, or this repo
-// isn't published yet), the default fallback copies this plugin once into a
-// durable shared location, ~/.agents/<name>, and symlinks each tool to that:
+// On a terminal, `init` shows a checklist of tools, already ticked for the
+// ones whose CLI it found: arrows to move, space to toggle, enter to confirm.
+// Pipe it, or pass --yes or a tool flag, and it takes the detected tools
+// without asking. `uninstall` asks nothing: it removes exactly
+// what the record in ~/.my-dev-skills.json says was installed, so a run that
+// chose one tool never touches the other.
+//
+// This installs onto the device rather than through a tool's plugin registry.
+// There is one real copy of the plugin and each tool gets a symlink to it:
 // full parity on Claude Code (skills, agents and hooks all load through the
-// symlink, verified against Claude Code 2.1.267), skills-only on Codex (one
+// symlink, verified against Claude Code 2.1.267), skills only on Codex (one
 // symlink per skill into ~/.agents/skills, the location its own docs name).
-// One copy, both tools, a later `init` refreshes it for both at once. If
-// symlinks aren't possible on this machine, it copies independently per tool
-// instead, which loses the hooks and, on Codex, the agents.
+// One copy, both tools, and a later `init` refreshes it for both at once.
 //
-// --link skips the copy entirely and symlinks straight at THIS checkout, so
-// edits here apply immediately with no reinstall step; only use it from a
-// checkout you intend to keep, not an ephemeral `npx` cache.
+// Where that one copy lives depends on how you run it. From a git checkout,
+// the checkout IS the copy and both tools link straight at it, so edits are
+// live with no reinstall. Any other way, npx included, it copies to
+// ~/.agents/<name> first, because npm deletes its cache after the run and a
+// link into it would dangle. --shared forces the copy from a checkout, to
+// test exactly what a user gets; --link forces the other way.
+// If symlinks aren't possible on this machine, it copies independently per
+// tool instead, which loses the hooks and, on Codex, the agents.
 //
-// Strategy: use each tool's own plugin/marketplace commands when its CLI is
-// installed (so future updates flow through the tool), and fall back to the
-// shared copy when it isn't. Matt's skills are never installed twice: every
-// known location is checked first, and existing installs are updated in place.
+// It deliberately does NOT register this plugin with a marketplace. If you want
+// that instead, run each tool's own commands (`claude plugin marketplace add`
+// then `claude plugin install`); the README documents them. Pick one route,
+// since the two put files in different places. Matt Pocock's skills are the
+// exception: --matt installs them from HIS marketplace, never ours, and never
+// twice, since every known location is checked first.
+
 
 const fs = require("fs");
 const os = require("os");
@@ -36,11 +51,10 @@ const root = path.resolve(__dirname, "..");
 const pkg = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
 const cfg = pkg.devSkills || {};
 const matt = cfg.matt || {};
-const repoUrl = ((pkg.repository && pkg.repository.url) || "").replace(/\.git$/, "");
-const ownerRepo = repoUrl.replace(/^.*github\.com[/:]/, "");
 const home = os.homedir();
 const sharedDir = path.join(home, ".agents", pkg.name);
 let sharedCopyReady = false;
+let refusedCount = 0; // entries uninstall declined to delete because we didn't create them
 
 // ---------------------------------------------------------------------------
 // Tool-specific commands and paths. Verify these against the current CLIs
@@ -87,10 +101,20 @@ const flags = new Set(args.filter((a) => a.startsWith("-")));
 const wantsHelp = flags.has("--help") || flags.has("-h");
 const dryRun = flags.has("--dry-run");
 const withMatt = flags.has("--matt");
-const link = flags.has("--link");
+// A checkout carries .git (a directory, or a file in a worktree); an npx cache
+// doesn't, and npm deletes it after the run, so only a checkout is safe to
+// link at directly. --link and --shared override the guess in either direction.
+const isCheckout = fs.existsSync(path.join(root, ".git"));
+const forceLink = flags.has("--link");
+const forceShared = flags.has("--shared");
+const link = forceLink || (isCheckout && !forceShared);
+const assumeYes = flags.has("--yes") || flags.has("-y");
 
 if (wantsHelp || !["init", "uninstall"].includes(command)) {
-  console.log(fs.readFileSync(__filename, "utf8").split("\n").slice(1, 28).map((l) => l.replace(/^\/\/ ?/, "")).join("\n"));
+  // Ends at the first line that isn't a comment, so adding to the header above can't truncate the help or leak code.
+  const lines = fs.readFileSync(__filename, "utf8").split("\n");
+  const end = lines.findIndex((l, i) => i > 0 && !l.startsWith("//"));
+  console.log(lines.slice(1, end).map((l) => l.replace(/^\/\/ ?/, "")).join("\n"));
   process.exit(wantsHelp ? 0 : 1);
 }
 
@@ -133,6 +157,163 @@ function isInstalledPlugin(tool, out, name) {
 function hasCli(cli) {
   return spawnSync(cli, ["--version"], { encoding: "utf8", shell: process.platform === "win32" }).status === 0;
 }
+
+// ---------------------------------------------------------------------------
+// Choosing tools
+// ---------------------------------------------------------------------------
+const TOOLS = ["claude", "codex"];
+const TOOL_LABEL = { claude: "Claude Code", codex: "Codex" };
+
+// Blocks until one keypress, synchronously, so the rest of this script can stay
+// synchronous. Raw mode makes a read return on the first byte; libuv can still
+// leave the fd non-blocking, which surfaces as EAGAIN, so retry briefly.
+function readKey() {
+  const buf = Buffer.alloc(8);
+  for (let attempt = 0; attempt < 2000; attempt++) {
+    try {
+      const n = fs.readSync(0, buf, 0, buf.length, null);
+      return n > 0 ? buf.toString("utf8", 0, n) : null; // zero bytes means the stream closed
+    } catch (err) {
+      if (err.code === "EOF") return null;
+      if (err.code !== "EAGAIN") throw err;
+      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 10); // a 10ms sleep, synchronous
+    }
+  }
+  return null;
+}
+
+const ESC = "\x1b";
+const KEY = { ctrlC: "\x03", up: ESC + "[A", down: ESC + "[B", enter: "\r", enterLF: "\n", space: " " };
+
+// A checklist: arrows move, space toggles, enter confirms. Returns the chosen
+// values, an empty array if everything was unticked, or null if cancelled.
+// Throws when the terminal can't do raw mode, so the caller can ask in text.
+function checkbox(title, items, preselected) {
+  const out = process.stdout;
+  const chosen = new Set(preselected);
+  let cursor = 0;
+  let drawn = 0;
+
+  const draw = () => {
+    if (drawn) out.write(ESC + "[" + drawn + "A"); // back to the top of the list
+    out.write(ESC + "[0J"); // clear downward, so a redraw never leaves a stale line
+    for (let i = 0; i < items.length; i++) {
+      const box = chosen.has(items[i].value) ? "[x]" : "[ ]";
+      out.write((i === cursor ? " > " : "   ") + box + " " + items[i].label + (items[i].hint || "") + "\n");
+    }
+    drawn = items.length;
+  };
+
+  out.write("\n" + title + "\n  arrows to move, space to toggle, a for all, enter to confirm\n\n");
+  process.stdin.setRawMode(true); // throws if this isn't a terminal that supports it
+  out.write(ESC + "[?25l"); // hide the cursor while the list redraws
+  try {
+    draw();
+    for (;;) {
+      const key = readKey();
+      if (key === null || key === KEY.ctrlC || key === ESC) return null; // closed, ctrl-c, or escape
+      if (key === KEY.up || key === "k") cursor = (cursor - 1 + items.length) % items.length;
+      else if (key === KEY.down || key === "j") cursor = (cursor + 1) % items.length;
+      else if (key === KEY.space) {
+        const value = items[cursor].value;
+        if (chosen.has(value)) chosen.delete(value);
+        else chosen.add(value);
+      } else if (key === "a" || key === "A") {
+        if (chosen.size === items.length) chosen.clear();
+        else items.forEach((i) => chosen.add(i.value));
+      } else if (key === KEY.enter || key === KEY.enterLF) {
+        return items.filter((i) => chosen.has(i.value)).map((i) => i.value);
+      }
+      draw();
+    }
+  } finally {
+    out.write(ESC + "[?25h"); // show the cursor again, whatever happened
+    try {
+      process.stdin.setRawMode(false);
+    } catch {}
+  }
+}
+
+// Fallback for a terminal that can't do raw mode: the same choice, typed.
+// /dev/tty keeps it working when stdin is piped but stdout is still a terminal.
+function askTyped(detected) {
+  let fd = 0;
+  if (process.platform !== "win32") {
+    try {
+      fd = fs.openSync("/dev/tty", "r");
+    } catch {
+      fd = 0;
+    }
+  }
+  const readLine = () => {
+    const buf = Buffer.alloc(256);
+    for (let attempt = 0; attempt < 400; attempt++) {
+      try {
+        const n = fs.readSync(fd, buf, 0, buf.length, null);
+        return buf.toString("utf8", 0, n).trim();
+      } catch (err) {
+        if (err.code !== "EAGAIN") return null;
+        Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 25);
+      }
+    }
+    return null;
+  };
+
+  log("\nInstall for which tools?");
+  TOOLS.forEach((t, i) => log(`  ${i + 1}) ${TOOL_LABEL[t]}${detected.includes(t) ? "" : "   (CLI not found)"}`));
+  const shown = detected.map((t) => TOOLS.indexOf(t) + 1).join(",");
+  const resolve = (tok) => (TOOLS.includes(tok.toLowerCase()) ? tok.toLowerCase() : TOOLS[Number(tok) - 1]);
+
+  try {
+    for (let attempt = 0; attempt < 3; attempt++) {
+      process.stdout.write(`Numbers or names, comma separated, or "all" [${shown}]: `);
+      const answer = readLine();
+      if (answer === null) break;
+      if (!answer) return detected;
+      if (/^(all|both)$/i.test(answer)) return TOOLS.slice();
+      const picked = [...new Set(answer.split(/[\s,]+/).filter(Boolean).map(resolve))];
+      if (picked.length && !picked.includes(undefined)) return picked;
+      warn(`didn't understand "${answer}"`);
+    }
+  } finally {
+    if (fd !== 0) {
+      try {
+        fs.closeSync(fd);
+      } catch {}
+    }
+  }
+  warn(`using the detected tools: ${detected.join(", ")}`);
+  return detected;
+}
+
+// Which tools to install for. An explicit flag wins, then the checklist, then
+// the detected tools, so piped and CI runs behave exactly as they did before.
+function chooseTools(detected) {
+  const flagged = TOOLS.filter((t) => flags.has(`--${t}`));
+  if (flagged.length) return flagged;
+  if (assumeYes || !process.stdout.isTTY) return detected;
+
+  if (process.stdin.isTTY) {
+    try {
+      const items = TOOLS.map((t) => ({
+        value: t,
+        label: TOOL_LABEL[t],
+        hint: detected.includes(t) ? "" : "   (CLI not found)",
+      }));
+      const picked = checkbox("Install for which tools?", items, detected);
+      if (picked === null) {
+        log("\nCancelled. Nothing was changed.");
+        process.exit(1);
+      }
+      return picked;
+    } catch {
+      // Not a terminal that supports raw mode; ask in text instead.
+    }
+  }
+  return askTyped(detected);
+}
+
+// ---------------------------------------------------------------------------
 
 // A copied folder can't prove it is ours the way a symlink can, so we leave a
 // marker inside and only ever replace a folder that carries one.
@@ -220,28 +401,9 @@ function linkSelf(tool) {
 // ---------------------------------------------------------------------------
 // This plugin
 // ---------------------------------------------------------------------------
-function installSelf(tool) {
-  const c = CONFIG[tool];
-  log(`\n[${tool}] installing ${pkg.name}`);
-
-  if (hasCli(c.cli) && ownerRepo) {
-    const added = run(c.cli, c.marketplaceAdd(ownerRepo));
-    const installed = added.ok && run(c.cli, c.install(pkg.name, pkg.name));
-    if (installed && installed.ok) {
-      if (c.update) run(c.cli, c.update(`${pkg.name}@${pkg.name}`)); // a repeat install is a no-op; update picks up a new version
-      return { method: "marketplace" };
-    }
-    warn(`${c.cli} plugin commands failed; falling back to a shared copy`);
-  } else {
-    warn(hasCli(c.cli) ? "no repository URL in package.json" : `${c.cli} CLI not found`);
-  }
-
-  return sharedSelf(tool);
-}
-
-// Default fallback: one real copy under ~/.agents/<name>, and this tool gets
-// a symlink into it, same shape and the same loading mechanism as --link,
-// just pointing at the durable shared copy instead of the live checkout.
+// How `init` installs: one real copy under ~/.agents/<name>, and each tool gets
+// a symlink into it. Same mechanism as --link, pointing at the durable shared
+// copy rather than the live checkout. No marketplace is involved.
 function sharedSelf(tool) {
   const c = CONFIG[tool];
   ensureSharedCopy();
@@ -304,6 +466,7 @@ function uninstallSelf(tool) {
     if (!stat) return;
     const ours = ownership === "symlink" ? isOurs(target, stat) : isOurCopy(target);
     if (!ours) {
+      refusedCount++;
       warn(`${target} isn't one of ours; leaving it alone`);
       return;
     }
@@ -389,15 +552,23 @@ function installMatt(tool, found) {
 // Main
 // ---------------------------------------------------------------------------
 log(`${pkg.name} v${pkg.version}${dryRun ? " (dry run)" : ""}`);
-const tools = ["claude", "codex"].filter((t) => hasCli(CONFIG[t].cli));
-if (!tools.length) {
-  warn("neither the claude nor the codex CLI was found; using skill-file locations for both");
-  tools.push("claude", "codex");
+if (forceLink && forceShared) warn("--link and --shared contradict each other; using --link");
+if (command === "init") {
+  log(link ? `  the plugin stays here: ${root}` : `  the plugin is copied to: ${sharedDir}`);
+  if (link && !forceLink) log("  (a git checkout, so both tools link straight at it; pass --shared to install the way users do)");
+}
+const detected = TOOLS.filter((t) => hasCli(CONFIG[t].cli));
+if (!detected.length) {
+  warn("neither the claude nor the codex CLI was found; offering both, since the files install without them");
+  detected.push(...TOOLS);
 }
 
 if (command === "uninstall") {
   const prior = readManifest();
-  tools.forEach(uninstallSelf);
+  // Remove from what was actually installed, not from whatever is on the machine now:
+  // an install that chose one tool must not have the other cleaned up underneath it.
+  const installed = prior && prior.tools ? TOOLS.filter((t) => prior.tools[t]) : detected;
+  installed.forEach(uninstallSelf);
   const anyShared = prior && prior.tools && Object.values(prior.tools).some((t) => t && t.self === "shared");
   if (anyShared && fs.lstatSync(sharedDir, { throwIfNoEntry: false })) {
     if (dryRun) log(`\nremove ${sharedDir}`);
@@ -406,14 +577,27 @@ if (command === "uninstall") {
       log(`\nremoved ${sharedDir}`);
     }
   }
+  // Keep the record when anything was refused, or the install becomes unremovable:
+  // without it a later uninstall has no method to act on and does nothing at all.
+  if (refusedCount) {
+    log(`\nLeft ${refusedCount} ${refusedCount === 1 ? "entry" : "entries"} alone, because this copy of the plugin didn't create ${refusedCount === 1 ? "it" : "them"}.`);
+    log(`Kept the install record at ${CONFIG.manifestFile}. Run uninstall from the folder you installed from.`);
+    process.exit(1);
+  }
   if (!dryRun && fs.existsSync(CONFIG.manifestFile)) fs.rmSync(CONFIG.manifestFile);
   log(`\nRemoved ${pkg.name}. Matt Pocock's skills were left in place.`);
   process.exit(0);
 }
 
+const tools = chooseTools(detected);
+if (!tools.length) {
+  log("\nNothing selected, so nothing was installed.");
+  process.exit(0);
+}
+
 const summary = {};
 for (const tool of tools) {
-  summary[tool] = { self: (link ? linkSelf(tool) : installSelf(tool)).method };
+  summary[tool] = { self: (link ? linkSelf(tool) : sharedSelf(tool)).method };
   const found = findMatt(tool);
   if (withMatt) {
     summary[tool].matt = installMatt(tool, found);

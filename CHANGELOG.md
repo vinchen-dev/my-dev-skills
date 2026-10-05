@@ -1,6 +1,18 @@
 # Changelog
 
-## 0.1.0 — unreleased
+## 0.2.0 — unreleased
+
+The `npx` installer became a device-level installer instead of a wrapper around each tool's marketplace commands.
+
+- `init` no longer registers this plugin with a marketplace. It installs onto the device: one real copy of the plugin, with each tool symlinked to it. Full parity (skills, agents, hooks) on Claude Code, verified against Claude Code 2.1.267; skills only on Codex via `~/.agents/skills`. Run each tool's own `plugin marketplace add` and `plugin install` for the marketplace route instead. The two put files in different places, so pick one.
+- Run from a git clone, the clone itself is that one copy and both tools link straight at it, so edits are live with no reinstall. Any other way, `npx` included, it copies to `~/.agents/my-dev-skills` first, because npm deletes its cache after the run and a link into it would dangle. `--shared` and `--link` force either side, and `--link` no longer has to be typed from a clone.
+- `init` asks which tools to install for: a checklist driven by arrow keys and space, pre-ticked with the tools whose CLI it found. It falls back to a typed prompt where raw mode isn't available, and asks nothing when piped or given `--claude`, `--codex` or `--yes`, so scripted runs are unaffected.
+- `uninstall` removes only what the install recorded, so a run that chose one tool never disturbs the other. It previously acted on whichever CLIs happened to be present.
+- Fixed: a refused uninstall deleted its install record anyway, leaving the links in place with nothing for a later uninstall to act on, so the install could not be removed. It now keeps the record, reports how many entries it left alone, and exits non-zero.
+- `--help` finds the end of its own header comment rather than slicing a fixed line count, so editing that comment can no longer truncate the help or leak code into it.
+- README covers both install routes, says plainly that they put files in different places, and gains an uninstall section with the verified commands for each.
+
+## 0.1.0 — 2026-10-05
 
 First release.
 

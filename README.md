@@ -55,9 +55,9 @@ Then install Matt's skills separately in Codex, from his own repo. Codex gets th
 
 **You must install [Matt Pocock's skills](https://github.com/mattpocock/skills) as well. They are a hard dependency, not an optional extra.** `dev-build` calls his `tdd` and `code-review` by name and stops at preflight if they are missing, and the per-repo setup below starts with his `setup-matt-pocock-skills`. They install from his own marketplace rather than being re-listed in this one, so his updates reach you directly from [mattpocock/skills](https://github.com/mattpocock/skills). The `npx` installer does the same thing with `--matt`.
 
-**Working on this plugin itself:** clone it and add the checkout as the marketplace instead, `claude plugin marketplace add /path/to/my-dev-skills`. Claude Code loads it live from that folder, so edits apply on the next session with no reinstall. A marketplace name is registered once, so remove the GitHub one first if you already added it.
+### Or install once for both tools
 
-**One command for both tools**, straight from this repo:
+The commands above register this repo as a marketplace in one tool. The installer does something different: it puts **one copy of the plugin on your machine** and links both tools to it, so a single update reaches both.
 
 ```bash
 npx -y github:vinchen-dev/my-dev-skills init          # install or update, for Claude Code and Codex
@@ -65,7 +65,65 @@ npx -y github:vinchen-dev/my-dev-skills init --matt   # also install Matt Pocock
 npx -y github:vinchen-dev/my-dev-skills uninstall     # remove this plugin; Matt's skills stay
 ```
 
-The shorter `npx my-dev-skills ...` form needs the npm package, which is not published yet. The `github:` form above works today and does the same thing. It uses each tool's own marketplace commands when their CLI is available, so updates keep flowing through the tool. When that is not possible it copies this plugin once into a durable shared location (`~/.agents/my-dev-skills`) and symlinks both tools to that single copy, full parity on Claude Code and skills only on Codex, refreshing both at once on a later `init`. In every mode it refuses to overwrite or delete anything it did not create.
+On a terminal, `init` shows a checklist, already ticked for the tools whose CLI it found:
+
+```
+Install for which tools?
+  arrows to move, space to toggle, a for all, enter to confirm
+
+ > [x] Claude Code
+   [x] Codex
+```
+
+Add `--claude` or `--codex` to choose without being asked, and `--yes` to take every detected tool, which is what a piped or CI run does on its own. `uninstall` asks nothing and removes exactly what the install recorded, so a run that chose one tool never disturbs the other.
+
+| Where | What goes there |
+|---|---|
+| `~/.agents/my-dev-skills` | The one real copy: manifest, skills, agents, hooks |
+| `~/.claude/skills/my-dev-skills` | A symlink to that copy. Claude Code loads skills, agents and hooks from it |
+| `~/.agents/skills/` | One symlink per skill, the user location Codex's docs name. Skills only |
+
+A later `init` refreshes that single copy and both tools see it at once, with no plugin update step. It never registers this plugin with a marketplace, and it refuses to overwrite or delete anything it did not create. If symlinks are not possible on your machine it copies per tool instead, which loses the hooks.
+
+Run `init` from a git clone and it skips the copy: the clone itself becomes the one real copy, and both tools link straight at it, so your edits are live with no reinstall. Only a clone is treated this way, because an `npx` run happens in a cache npm deletes afterwards. Force either side with `--shared` or `--link`.
+
+**Pick one route, not both**, since the marketplace commands and the installer put files in different places. Matt's skills are the exception: `--matt` always installs them from his own marketplace.
+
+The shorter `npx my-dev-skills ...` form needs the npm package, which is not published yet. The `github:` form above works today.
+
+### Working on this plugin itself
+
+Clone it and add the checkout as the marketplace instead, `claude plugin marketplace add /path/to/my-dev-skills`. Claude Code loads it live from that folder, so edits apply on the next session with no reinstall. A marketplace name is registered once, so remove the GitHub one first if you already added it.
+
+The installer does the same thing with no flag. Run `node bin/install.js init` from the clone and it links both tools at the clone, because it has a `.git`. Add `--shared` when you want to test the copy a real user gets instead.
+
+### Uninstalling
+
+Use the route you installed with.
+
+**The installer:**
+
+```bash
+npx -y github:vinchen-dev/my-dev-skills uninstall
+```
+
+It drops the symlinks, deletes the shared copy if it made one, and removes its record at `~/.my-dev-skills.json`. Removing a symlink never follows it, so a linked clone is left untouched. Matt's skills stay. Add `--dry-run` to see the plan without doing it.
+
+Run it **from the folder you installed from**. The safety check only deletes links pointing into that folder or into `~/.agents/my-dev-skills`, so an `npx` run cannot remove a clone's links and the other way round. If it refuses, it says so, keeps the record, and exits non-zero, so nothing is stranded and you can retry from the right folder. For a clone install that is `node bin/install.js uninstall` in the clone.
+
+**The marketplace route:**
+
+```bash
+claude plugin uninstall my-dev-skills
+claude plugin marketplace remove my-dev-skills    # optional, forgets the source too
+
+codex plugin remove my-dev-skills@my-dev-skills
+codex plugin marketplace remove my-dev-skills     # optional
+```
+
+**Matt Pocock's skills are separate** and survive either route, which is deliberate since other workflows use them. Remove them with `claude plugin uninstall mattpocock-skills` and, if you want, `claude plugin marketplace remove mattpocock`.
+
+Start a new session in each tool afterwards for the change to take effect.
 
 ## Per-repo setup
 

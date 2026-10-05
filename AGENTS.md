@@ -15,7 +15,7 @@ Read `README.md` for the user-facing overview and the workflow diagram.
 | `hooks/hooks.json` | Registers the two hook scripts with Claude Code | Claude Code, on every edit and Bash call |
 | `hooks/*.js` | The hook scripts (formatter after edits, guard before Bash) | Run automatically; must never block valid work |
 | `hooks/guard-cases.txt` | Expected exit code per command for the guard, run by `scripts/test-guard.js` | You, after changing the guard |
-| `bin/install.js` | The `npx my-dev-skills` installer | Users |
+| `bin/install.js` | The `npx my-dev-skills` installer. Installs onto the device: one real copy symlinked into each tool, never through a marketplace. The copy is this clone when run from one, otherwise `~/.agents/<name>`. Shows a checklist of tools when it has a terminal. Only `--matt` runs marketplace commands, and only against Matt's own | Users |
 | `scripts/build-manifests.js` | Generates the four manifest files from `package.json` | You, after changing `package.json` |
 | `.claude-plugin/`, `.codex-plugin/`, `.agents/plugins/` | **Generated** manifests and marketplaces | The plugin systems; never hand-edit |
 | `package.json` | Source of truth for name, version, description, and the list of Matt Pocock's skills we depend on | The installer and the manifest script |
