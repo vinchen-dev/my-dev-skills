@@ -28,45 +28,44 @@ With your permission, asked once at the start of a build, `dev-build` commits wo
 | `dev-verifier` | Agent (this plugin) | Runs `dev-verify` in an isolated context | Tests only |
 | `dev-reviewer` | Agent (this plugin) | Dedicated second look after `code-review`: tool output, performance and resource use, security, reliability, structure, tests | No |
 | Hooks | Hooks (this plugin) | Format each edited file with the repo's `format-one` command; block destructive git, database and publish commands | Enforced |
-| `grill-me`, `to-spec`, `to-tickets`, `tdd`, `code-review`, `diagnosing-bugs`, `setup-matt-pocock-skills`, `pr` | Skills (Matt Pocock) | Interview, spec, tickets, implementation, standards + spec review, debugging, per-repo setup, PR body | Varies |
+| `grill-me`, `to-spec`, `to-tickets`, `tdd`, `code-review`, `diagnosing-bugs`, `setup-matt-pocock-skills`, `pr` | Skills ([Matt Pocock](https://github.com/mattpocock/skills), installed separately) | Interview, spec, tickets, implementation, standards + spec review, debugging, per-repo setup, PR body | Varies |
 
 ## Install
 
-The GitHub repository and npm package are not published yet. Until they are, install from a local checkout, which is the route verified end to end:
+**Claude Code:**
 
 ```bash
-claude plugin marketplace add /path/to/my-dev-skills
+claude plugin marketplace add vinchen-dev/my-dev-skills
 claude plugin install my-dev-skills@my-dev-skills
-claude plugin install mattpocock-skills@my-dev-skills   # required, see below
+
+claude plugin marketplace add mattpocock/skills          # required, see below
+claude plugin install mattpocock-skills@mattpocock
 ```
 
-Claude Code loads the plugin live from that folder, so edits apply to the next session without reinstalling. For Codex: `codex plugin marketplace add /path/to/my-dev-skills`, then `codex plugin add my-dev-skills@my-dev-skills`, then install Matt's skills separately, since Codex skips the source this marketplace uses for them.
+Or the same from inside a session with `/plugin marketplace add` and `/plugin install`.
 
-**Matt Pocock's skills are a hard dependency, not an optional extra.** `dev-build` calls his `tdd` and `code-review` by name and stops at preflight if they are missing, and the per-repo setup below starts with his `setup-matt-pocock-skills`. The third command above installs them from this plugin's own marketplace; `mattpocock-skills@mattpocock` works too if you prefer his.
-
-**Once published, one command:**
+**Codex:**
 
 ```bash
-npx my-dev-skills init          # install or update this plugin, for Claude Code and Codex
-npx my-dev-skills init --matt   # also install or update Matt Pocock's skills
-npx my-dev-skills uninstall     # remove this plugin; Matt's skills stay
+codex plugin marketplace add vinchen-dev/my-dev-skills
+codex plugin add my-dev-skills@my-dev-skills
 ```
 
-The installer uses each tool's marketplace commands when its CLI is available, so later updates come through the tool. When that isn't possible, instead of copying separately into each tool, it copies this plugin once into a durable shared location (`~/.agents/my-dev-skills`) and symlinks Claude Code and Codex to that one copy, full parity on Claude Code (skills, agents, hooks), skills only on Codex. A later `init` refreshes that one copy for both tools at once. It never installs Matt's skills twice: a plugin install is updated in place, and if his skills exist as plain files it stops and tells you how to switch.
+Then install Matt's skills separately in Codex, from his own repo. Codex gets the skills only, since agents and hooks are Claude Code concepts.
 
-**Claude Code marketplace, once published:**
+**You must install [Matt Pocock's skills](https://github.com/mattpocock/skills) as well. They are a hard dependency, not an optional extra.** `dev-build` calls his `tdd` and `code-review` by name and stops at preflight if they are missing, and the per-repo setup below starts with his `setup-matt-pocock-skills`. They install from his own marketplace rather than being re-listed in this one, so his updates reach you directly from [mattpocock/skills](https://github.com/mattpocock/skills). The `npx` installer does the same thing with `--matt`.
 
+**Working on this plugin itself:** clone it and add the checkout as the marketplace instead, `claude plugin marketplace add /path/to/my-dev-skills`. Claude Code loads it live from that folder, so edits apply on the next session with no reinstall. A marketplace name is registered once, so remove the GitHub one first if you already added it.
+
+**One command for both tools**, straight from this repo:
+
+```bash
+npx -y github:vinchen-dev/my-dev-skills init          # install or update, for Claude Code and Codex
+npx -y github:vinchen-dev/my-dev-skills init --matt   # also install Matt Pocock's skills
+npx -y github:vinchen-dev/my-dev-skills uninstall     # remove this plugin; Matt's skills stay
 ```
-/plugin marketplace add vinchen-dev/my-dev-skills
-/plugin install my-dev-skills@my-dev-skills
-/plugin install mattpocock-skills@my-dev-skills    # or from his own marketplace: mattpocock-skills@mattpocock
-```
 
-**Codex:** add this repo as a marketplace, then install `my-dev-skills` from it. Codex reads `.agents/plugins/marketplace.json` (falling back to `.claude-plugin/marketplace.json` only when that file is absent) and skips the `github` source used for Matt's entry, so install Matt's skills separately in Codex, for example with `npx my-dev-skills init --matt`.
-
-**Developing this plugin itself:** `npx my-dev-skills init --link`, run from a checkout you intend to keep (not an ephemeral `npx` cache). Instead of copying into the shared location, it symlinks the checkout itself straight into `~/.claude/skills/my-dev-skills` and, per skill, into `~/.agents/skills/` for Codex. Editing the checkout then takes effect for both tools on their next session, with no reinstall step at all, not even the one-copy refresh the default does. It won't take effect if you also have `my-dev-skills` installed from a marketplace; `claude plugin list` reports the conflict by name, and you'd remove one or the other.
-
-**Two optional tools the explorer will use if you have them**, neither shipped with this plugin and neither required: a Graphify knowledge graph, detected by a `graphify-out/` directory in the repo, and an Obsidian project vault reached through an `obsidian-recall` skill. With neither installed the explorer scans normally and says nothing about them.
+The shorter `npx my-dev-skills ...` form needs the npm package, which is not published yet. The `github:` form above works today and does the same thing. It uses each tool's own marketplace commands when their CLI is available, so updates keep flowing through the tool. When that is not possible it copies this plugin once into a durable shared location (`~/.agents/my-dev-skills`) and symlinks both tools to that single copy, full parity on Claude Code and skills only on Codex, refreshing both at once on a later `init`. In every mode it refuses to overwrite or delete anything it did not create.
 
 ## Per-repo setup
 
@@ -111,6 +110,7 @@ Checked against the real tools (October 2026):
 
 - `claude plugin validate` passes for the plugin manifest, marketplace, skills and agents; a real marketplace install from the local path shows 6 skills, 3 agents and 2 hooks.
 - The `claude plugin marketplace add / install / update / uninstall / list` commands used by the installer exist with that syntax.
+- Installing from the published GitHub repo verified on both tools: `claude plugin marketplace add` plus `claude plugin install` loads 6 skills, 3 agents and 2 hooks, and `codex plugin marketplace add` plus `codex plugin add` installs on Codex. Claude Code clones over SSH first and falls back to HTTPS, so no GitHub SSH key is needed.
 - Matt's marketplace is `mattpocock`, his plugin `mattpocock-skills` (1.2.3 at the time). Every skill this workflow uses is in that release except `pr`, which is on his `main` branch after the 1.2.3 tag; his manifest pins the version, so `plugin update` won't fetch it until he bumps it, and `dev-ship` falls back to its own PR structure when `pr` is absent.
 - Matt's skills resolve from the plugin as `mattpocock-skills:<name>`, for example `mattpocock-skills:tdd`.
 - Codex 0.145 plugin commands match `CONFIG` (`plugin add`, `plugin remove`, `plugin list --json`, `plugin marketplace add`); the `.agents/plugins/marketplace.json` fields match Codex's bundled marketplaces; Codex user skills are scanned in both `~/.agents/skills` (documented) and `~/.codex/skills` (where the `skills` CLI writes).
@@ -119,7 +119,7 @@ Checked against the real tools (October 2026):
 
 ## Still to confirm
 
-- Publication: the GitHub repository and npm package named in `package.json` do not exist yet; the Install section leads with the local-path route for that reason.
+- Publication: the GitHub repository is live and both marketplace routes are verified from it. The npm package is not published, so the `npx` installer cannot be fetched yet.
 - Codex subagent support: `dev-verifier` and `dev-reviewer` are Claude Code agents. In Codex, `dev-build` runs `dev-verify` and the reviewer axes inline.
 
 ## License

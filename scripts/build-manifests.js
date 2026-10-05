@@ -53,9 +53,10 @@ write(".claude-plugin/plugin.json", {
   keywords: ["workflow", "planning", "verification", "code-review", "skills", ...skills, ...agents],
 });
 
-// Claude Code marketplace: this plugin from the repo root, plus Matt's plugin
-// from his repo so one marketplace covers both. Codex reads .agents/plugins/marketplace.json
-// instead and has no `github` source type, so Matt's entry is Claude-only.
+// Claude Code marketplace, listing only this plugin. Matt Pocock's skills are a
+// dependency, but they are his to distribute: users add his marketplace and install
+// from it, so his updates reach them directly rather than through a copy of his
+// entry here. `devSkills.matt` in package.json still drives the installer.
 write(".claude-plugin/marketplace.json", {
   name: pkg.name,
   owner: pkg.author,
@@ -68,16 +69,6 @@ write(".claude-plugin/marketplace.json", {
       version: pkg.version,
       category: "development",
     },
-    ...(matt.repo
-      ? [
-          {
-            name: matt.pluginName || "mattpocock-skills",
-            source: { source: "github", repo: matt.repo },
-            description: "Matt Pocock's skills used by this workflow (grill-me, to-spec, tdd, code-review, ...)",
-            category: "development",
-          },
-        ]
-      : []),
   ],
 });
 

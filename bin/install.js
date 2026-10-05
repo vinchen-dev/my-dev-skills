@@ -430,7 +430,7 @@ for (const [tool, s] of Object.entries(summary)) {
   log(`  ${tool}: ${pkg.name} via ${s.self}; Matt's skills ${s.matt}`);
 }
 if (!withMatt && Object.values(summary).some((s) => s.matt === "missing")) {
-  log(`\nMatt Pocock's skills are required by dev-build and dev-reviewer. Install them with:\n  npx ${pkg.name} init --matt`);
+  log(`\nMatt Pocock's skills are required by dev-build and dev-reviewer. Re-run this installer with --matt to add them.`);
 }
 log("\nNext: run dev-standards in each repo to generate AGENTS.md and docs/standards.md.");
 
