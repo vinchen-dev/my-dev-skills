@@ -1,6 +1,6 @@
 <!--
 TEMPLATE FOR docs/standards.md — instructions for dev-standards (delete all template comments in the output):
-- Keep every section heading, even if a section ends up short. Code review relies on these sections existing.
+- Keep every section heading, even if a section ends up short. `dev-reviewer` refers to these sections by name.
 - The rules below are universal defaults (src: default). Keep, adjust or drop each one based on repo evidence.
 - Add stack-pack rules and repo-specific rules into the matching section, with src tags.
 - Replace every {{placeholder}}.
@@ -8,7 +8,7 @@ TEMPLATE FOR docs/standards.md — instructions for dev-standards (delete all te
 
 # Coding standards
 
-These standards define what good code looks like in this repo. They are used when writing code (`implement`, `dev-build`) and when reviewing it (`code-review`).
+These standards define what good code looks like in this repo. They are used when writing code (`dev-plan`, which carries them into the plan that `dev-build` implements) and when reviewing it (`code-review` and `dev-reviewer`).
 
 - **Must** rules are required. Code review reports violations as must-fix.
 - **Prefer** rules are the default choice. Code review reports deviations as suggestions.

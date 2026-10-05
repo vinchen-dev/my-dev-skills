@@ -1,6 +1,15 @@
 # Changelog
 
-## 0.2.0 — unreleased
+## 0.2.1 — unreleased
+
+Fixes from a review of the skills against Matt Pocock's installed 1.2.3 release.
+
+- `dev-build`'s no-subagents fallback names the seven review axes inline. It used to point at `agents/dev-reviewer.md`, which Codex installs don't include, and Codex is the case that fallback exists for. Its report template now collects suggestions from `code-review` as well as the `dev-reviewer`.
+- `pr` is no longer listed among Matt's skills the installer depends on, since his 1.2.3 release doesn't ship it; `dev-ship` already falls back to its own PR structure. It goes back on the list when his release includes it.
+- `dev-standards` no longer says his `implement` reads `docs/standards.md` (it doesn't; the `code-review` it calls does), and the standards template credits `dev-reviewer`, not `code-review`, with relying on its section headings.
+- Version bumps are automatic. `.githooks/pre-commit` runs `npm run bump` on the first commit after a push, which bumps the patch number, regenerates the manifests, opens the next `CHANGELOG.md` section and dates the one that shipped; later commits in the same cycle leave it alone. Run `npm run bump minor` yourself when a batch changes behaviour; a second bump in one cycle relabels the section rather than stacking a version that never shipped. Enable in a clone with `git config core.hooksPath .githooks`.
+
+## 0.2.0 — 2026-10-05
 
 The `npx` installer became a device-level installer instead of a wrapper around each tool's marketplace commands.
 

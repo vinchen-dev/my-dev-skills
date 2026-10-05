@@ -8,7 +8,7 @@ description: Set up or refresh a repository's agent rules and coding standards. 
 Creates the two per-repo files the rest of the workflow depends on. Every other skill is stack-agnostic, so this is where the repo's specifics get captured, and a wrong command or an invented rule here carries into every build and review. Evidence and verification matter more than speed.
 
 - **AGENTS.md** — how an agent must behave in this repo: verified commands, protected paths, workflow rules. It is loaded into every session, so it stays short. CLAUDE.md contains only `@AGENTS.md`, so Claude Code and Codex read the same source.
-- **docs/standards.md** — what good code looks like here. Read on demand by `dev-plan`, `implement`, `dev-verify` and `code-review`.
+- **docs/standards.md** — what good code looks like here. Read on demand by `dev-plan`, `dev-verify`, `dev-reviewer` and `code-review`.
 
 ## Workflow
 

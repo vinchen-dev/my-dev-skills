@@ -1,0 +1,22 @@
+#!/bin/sh
+# Bumps the version once per push cycle. If package.json still carries the version
+# that is on origin/main, this is the first commit since the last push, so run the
+# patch bump and stage what it changed. Later commits before the next push see the
+# version already moved and do nothing. Skip once with `git commit --no-verify`.
+#
+# Enable in a fresh clone:  git config core.hooksPath .githooks
+
+set -e
+cd "$(git rev-parse --show-toplevel)"
+
+current=$(node -p "require('./package.json').version")
+pushed=$(git show origin/main:package.json 2>/dev/null | node -p "JSON.parse(require('fs').readFileSync(0, 'utf8')).version" 2>/dev/null || true)
+
+if [ -z "$pushed" ]; then
+  exit 0 # no origin/main to compare against, so nothing to decide
+fi
+
+if [ "$current" = "$pushed" ]; then
+  node scripts/bump.js patch
+  git add package.json CHANGELOG.md .claude-plugin/plugin.json .claude-plugin/marketplace.json .codex-plugin/plugin.json .agents/plugins/marketplace.json
+fi

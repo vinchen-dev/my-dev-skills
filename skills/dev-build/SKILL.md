@@ -62,7 +62,7 @@ Round limit: three fix rounds by default, or whatever the user set. On reaching 
 
 ## Fallback without agents
 
-If the `dev-verifier` or `dev-reviewer` agents aren't available (for example in a tool without subagents), do the same work inline as separate steps: run the `dev-verify` skill, then `code-review` if you were allowed to commit, then the axes from `agents/dev-reviewer.md` as a checklist, axes 2 to 7 when `code-review` ran and all seven when it didn't. Say in the report that independence was reduced because the same context wrote and checked the code.
+If the `dev-verifier` or `dev-reviewer` agents aren't available (for example in a tool without subagents), do the same work inline as separate steps: run the `dev-verify` skill, then `code-review` if you were allowed to commit, then the seven review axes as a checklist: 1 correctness against the spec and plan, 2 tool output (new lint or typecheck errors), 3 performance, scalability and resources, 4 structure and naming, 5 tests, 6 security, 7 reliability. Cover axes 2 to 7 when `code-review` ran and all seven when it didn't. The full definitions are in this plugin's `agents/dev-reviewer.md`, which Codex installs don't include, so the names are listed here. Say in the report that independence was reduced because the same context wrote and checked the code.
 
 ## Report
 
@@ -79,7 +79,7 @@ Criteria: <n> passed, <n> failed, <n> unverified
 - <one line each>
 
 ## Suggestions for you to decide
-- <from the dev-reviewer, one line each>
+- <from code-review and the dev-reviewer, one line each>
 
 ## Disputed
 - <finding> — <why it wasn't applied>

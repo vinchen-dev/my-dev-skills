@@ -1,6 +1,6 @@
 {
   "name": "my-dev-skills",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Plan, verify and build skills that extend Matt Pocock's dev workflow with a plan step, spec verification and an implement \u2192 verify \u2192 review loop.",
   "author": {
     "name": "vinchen-dev"
@@ -30,6 +30,7 @@
   ],
   "scripts": {
     "manifests": "node scripts/build-manifests.js",
+    "bump": "node scripts/bump.js",
     "validate": "claude plugin validate .",
     "test:guard": "node scripts/test-guard.js",
     "prepublishOnly": "npm run manifests && npm run validate && npm run test:guard"
@@ -51,8 +52,7 @@
         "tdd",
         "code-review",
         "diagnosing-bugs",
-        "setup-matt-pocock-skills",
-        "pr"
+        "setup-matt-pocock-skills"
       ]
     }
   }

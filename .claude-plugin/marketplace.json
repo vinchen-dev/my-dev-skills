@@ -5,14 +5,14 @@
   },
   "metadata": {
     "description": "Plan, verify and build skills that extend Matt Pocock's dev workflow with a plan step, spec verification and an implement → verify → review loop.",
-    "version": "0.2.0"
+    "version": "0.2.1"
   },
   "plugins": [
     {
       "name": "my-dev-skills",
       "source": "./",
       "description": "Plan, verify and build skills that extend Matt Pocock's dev workflow with a plan step, spec verification and an implement → verify → review loop.",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "category": "development"
     }
   ]

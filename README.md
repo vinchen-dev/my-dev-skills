@@ -28,7 +28,7 @@ With your permission, asked once at the start of a build, `dev-build` commits wo
 | `dev-verifier` | Agent (this plugin) | Runs `dev-verify` in an isolated context | Tests only |
 | `dev-reviewer` | Agent (this plugin) | Dedicated second look after `code-review`: tool output, performance and resource use, security, reliability, structure, tests | No |
 | Hooks | Hooks (this plugin) | Format each edited file with the repo's `format-one` command; block destructive git, database and publish commands | Enforced |
-| `grill-me`, `to-spec`, `to-tickets`, `tdd`, `code-review`, `diagnosing-bugs`, `setup-matt-pocock-skills`, `pr` | Skills ([Matt Pocock](https://github.com/mattpocock/skills), installed separately) | Interview, spec, tickets, implementation, standards + spec review, debugging, per-repo setup, PR body | Varies |
+| `grill-me`, `to-spec`, `to-tickets`, `tdd`, `code-review`, `diagnosing-bugs`, `setup-matt-pocock-skills`, and `pr` when present | Skills ([Matt Pocock](https://github.com/mattpocock/skills), installed separately) | Interview, spec, tickets, implementation, standards + spec review, debugging, per-repo setup, PR body | Varies |
 
 ## Install
 
@@ -154,6 +154,8 @@ hooks/             hooks.json + format-file.js (post-edit formatter) + guard-com
 bin/install.js     npx installer
 AGENTS.md          rules for agents editing this repo (CLAUDE.md imports it)
 scripts/           build-manifests.js — regenerates the manifests from package.json
+                   bump.js — bumps the version and opens the next CHANGELOG section (run by the pre-commit hook)
+.githooks/         pre-commit — bumps the patch version on the first commit after a push; enable with `git config core.hooksPath .githooks`
 ```
 
 `package.json` is the source of truth for name, version, description and the list of Matt's skills. After changing it, run `npm run manifests`.
