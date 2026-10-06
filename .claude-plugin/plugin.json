@@ -1,7 +1,7 @@
 {
   "name": "my-dev-skills",
   "displayName": "My Dev Skills",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Plan, verify and build skills that extend Matt Pocock's dev workflow with a plan step, spec verification and an implement → verify → review loop.",
   "author": {
     "name": "vinchen-dev"
@@ -18,6 +18,7 @@
     "dev-build",
     "dev-plan",
     "dev-ship",
+    "dev-spec-explain",
     "dev-standards",
     "dev-ticket-summary",
     "dev-verify",

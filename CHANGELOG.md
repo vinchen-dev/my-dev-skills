@@ -1,13 +1,14 @@
 # Changelog
 
-## 0.2.1 — unreleased
+## 0.3.0 — unreleased
 
-Fixes from a review of the skills against Matt Pocock's installed 1.2.3 release.
+A new skill, automatic version bumps, and fixes from a review of the skills against Matt Pocock's installed 1.2.3 release.
 
 - `dev-build`'s no-subagents fallback names the seven review axes inline. It used to point at `agents/dev-reviewer.md`, which Codex installs don't include, and Codex is the case that fallback exists for. Its report template now collects suggestions from `code-review` as well as the `dev-reviewer`.
 - `pr` is no longer listed among Matt's skills the installer depends on, since his 1.2.3 release doesn't ship it; `dev-ship` already falls back to its own PR structure. It goes back on the list when his release includes it.
 - `dev-standards` no longer says his `implement` reads `docs/standards.md` (it doesn't; the `code-review` it calls does), and the standards template credits `dev-reviewer`, not `code-review`, with relying on its section headings.
 - Version bumps are automatic. `.githooks/pre-commit` runs `npm run bump` on the first commit after a push, which bumps the patch number, regenerates the manifests, opens the next `CHANGELOG.md` section and dates the one that shipped; later commits in the same cycle leave it alone. Run `npm run bump minor` yourself when a batch changes behaviour; a second bump in one cycle relabels the section rather than stacking a version that never shipped. Enable in a clone with `git config core.hooksPath .githooks`.
+- New skill `dev-spec-explain`: explains a feature spec in plain language for non-technical readers (product, QA, operations, support), with a list of affected features, then the changes grouped by feature (the configuration page, the approval page, the log) and split inside each group into small items a reader can check one at a time, with a Before/After table per feature for larger specs, on-screen labels, exact message text, what does not change and gaps in the spec. It reads whole documents and never reports code impact; that stays with `dev-plan` and `dev-explorer`. Model-invocable, with a worked example in `skills/dev-spec-explain/example.md`.
 
 ## 0.2.0 — 2026-10-05
 

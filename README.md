@@ -24,6 +24,7 @@ With your permission, asked once at the start of a build, `dev-build` commits wo
 | `dev-build` | Skill (this plugin) | Orchestrates implement → verify → review, applies fixes, reports | Yes; work-in-progress commits only with your permission |
 | `dev-ship` | Skill (this plugin) | Commit message, PR description (via Matt's `pr` when installed), changelog entry | Commits only when asked |
 | `dev-ticket-summary` | Skill (this plugin) | Condenses a finished investigation into a ticket-ready summary to paste. You invoke it; it is never triggered automatically | No |
+| `dev-spec-explain` | Skill (this plugin) | Explains a feature spec in plain language for product, QA, operations and support, lists the affected features, then groups the changes by feature with each change as its own small reviewable item, plus what does not change and gaps in the spec. Never reports code impact | No |
 | `dev-explorer` | Agent (this plugin) | Read-only codebase scan for `dev-plan` and `dev-standards`; optionally uses a Graphify knowledge graph and an Obsidian project vault, see below | No |
 | `dev-verifier` | Agent (this plugin) | Runs `dev-verify` in an isolated context | Tests only |
 | `dev-reviewer` | Agent (this plugin) | Dedicated second look after `code-review`: tool output, performance and resource use, security, reliability, structure, tests | No |
@@ -145,7 +146,7 @@ The order matters: Matt's setup edits `CLAUDE.md` whenever one exists, and Codex
 ## Repo layout
 
 ```
-skills/            dev-plan, dev-verify, dev-build, dev-ship, dev-ticket-summary, dev-standards (with template, monorepos reference and stack packs)
+skills/            dev-plan, dev-verify, dev-build, dev-ship, dev-ticket-summary, dev-spec-explain (with a worked example), dev-standards (with template, monorepos reference and stack packs)
 agents/            dev-explorer, dev-verifier, dev-reviewer
 hooks/             hooks.json + format-file.js (post-edit formatter) + guard-commands.js (blocks destructive commands)
 .claude-plugin/    Claude Code manifest and marketplace (generated)
@@ -168,9 +169,9 @@ Add the repo folder as a local marketplace in Claude Code and install from it, s
 
 Checked against the real tools (October 2026):
 
-- `claude plugin validate` passes for the plugin manifest, marketplace, skills and agents; a real marketplace install from the local path shows 6 skills, 3 agents and 2 hooks.
+- `claude plugin validate` passes for the plugin manifest, marketplace, skills and agents; a real marketplace install from the local path shows 7 skills, 3 agents and 2 hooks.
 - The `claude plugin marketplace add / install / update / uninstall / list` commands used by the installer exist with that syntax.
-- Installing from the published GitHub repo verified on both tools: `claude plugin marketplace add` plus `claude plugin install` loads 6 skills, 3 agents and 2 hooks, and `codex plugin marketplace add` plus `codex plugin add` installs on Codex. Claude Code clones over SSH first and falls back to HTTPS, so no GitHub SSH key is needed.
+- Installing from the published GitHub repo verified on both tools: `claude plugin marketplace add` plus `claude plugin install` loads 7 skills, 3 agents and 2 hooks, and `codex plugin marketplace add` plus `codex plugin add` installs on Codex. Claude Code clones over SSH first and falls back to HTTPS, so no GitHub SSH key is needed.
 - Matt's marketplace is `mattpocock`, his plugin `mattpocock-skills` (1.2.3 at the time). Every skill this workflow uses is in that release except `pr`, which is on his `main` branch after the 1.2.3 tag; his manifest pins the version, so `plugin update` won't fetch it until he bumps it, and `dev-ship` falls back to its own PR structure when `pr` is absent.
 - Matt's skills resolve from the plugin as `mattpocock-skills:<name>`, for example `mattpocock-skills:tdd`.
 - Codex 0.145 plugin commands match `CONFIG` (`plugin add`, `plugin remove`, `plugin list --json`, `plugin marketplace add`); the `.agents/plugins/marketplace.json` fields match Codex's bundled marketplaces; Codex user skills are scanned in both `~/.agents/skills` (documented) and `~/.codex/skills` (where the `skills` CLI writes).
