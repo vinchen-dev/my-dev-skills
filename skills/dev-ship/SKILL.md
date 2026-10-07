@@ -10,7 +10,7 @@ Turns completed work into something a reviewer can merge. It reads what the work
 ## Inputs
 
 - `AGENTS.md`: commit message format, branch conventions and any PR rules.
-- `.scratch/<feature-slug>/plan.md` and `verify-report.md`, the spec the plan points to, and the build report if it's in the conversation.
+- `.scratch/<feature-slug>/plan.md`, `verify-report.md` and `build-report.md` beside it, and the spec the plan points to. The plan's `WIP commits:` field says whether there are work-in-progress commits to squash.
 - `git status`, and `git diff <base>...HEAD --stat` with the base from the plan's `Base:` field, to confirm what the feature commit will contain, including dev-build's work-in-progress commits.
 
 ## Workflow

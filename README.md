@@ -14,7 +14,7 @@ Per feature:     grill-me → to-spec → dev-plan → to-tickets (optional) →
 Bugs:            diagnosing-bugs
 ```
 
-With your permission, asked once at the start of a build, `dev-build` commits work in progress on a feature branch before each review pass, because Matt's `code-review` only sees committed work; `dev-ship` squashes those commits into one. If you decline, `dev-build` skips `code-review` and the dev-reviewer covers all axes. No commit or PR carries AI attribution.
+With your permission, asked once at the start of a build, `dev-build` commits work in progress on a feature branch before each review pass, because Matt's `code-review` only sees committed work; `dev-ship` squashes those commits into one. If you decline, `dev-build` skips `code-review` and the dev-reviewer covers all axes. No commit or PR carries AI attribution. `to-tickets` is optional and feeds your tracker; `dev-build` works the plan's tasks, all of them or a subset you name by number or group, never tickets, and it stops at preflight until `dev-standards` has run.
 
 | Name | Type | Role | Edits code? |
 |---|---|---|---|
@@ -136,7 +136,7 @@ your-project/
 ├── AGENTS.md              # commands, protected paths, workflow rules (+ Matt's Agent skills block)
 ├── CLAUDE.md              # @AGENTS.md
 ├── docs/standards.md      # naming, structure, size, error handling, testing, performance, security
-└── .scratch/<feature>/    # per feature: spec.md (from to-spec, if local tracker), plan.md, verify-report.md
+└── .scratch/<feature>/    # per feature: spec.md (from to-spec, if local tracker), plan.md, verify-report.md, build-report.md
 ```
 
 Review `AGENTS.md` and `docs/standards.md` once. They are the only per-repo input to the workflow. Re-run `dev-standards` after major changes; it proposes updates, applies only what you approve, and never touches rules you wrote in `docs/standards.md`.

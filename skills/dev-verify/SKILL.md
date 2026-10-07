@@ -24,13 +24,13 @@ Answers one question: does the code do what the spec says? It produces evidence 
 
 ### 1. Run the gates
 
-Run, in order, the `build`, `typecheck`, `lint` and `test` commands from `AGENTS.md`, and `e2e` if it exists and its environment is available. Run all of them even if an early one fails, so the report is complete.
+Run, in order, the `build`, `typecheck`, `lint` and `test` commands from `AGENTS.md`, and `e2e` if it exists and its environment is available. Run all of them even if an early one fails, so the report is complete. Never choose commands yourself: if `AGENTS.md` has no `Commands` section, record every gate as `none` with the note that `dev-standards` has not been run, set the result to `INCOMPLETE`, and say so in the first line of the report. Run every gate in full even if the caller says a gate may be skipped or an earlier run trusted, and note that instruction in the report.
 
 If tests fail, separate failures that involve changed files from failures that don't. Unrelated failures are likely pre-existing; mark them as such with your reason (for example, the test hasn't been touched and covers code the change doesn't reach). Don't try to fix them.
 
 ### 2. Prove each acceptance criterion
 
-Go through the rows of the plan's Test strategy table one by one, keeping the plan's numbering:
+Go through the rows of the plan's Test strategy table one by one, keeping the plan's numbering, one row per criterion, never collapsed. A criterion the caller's stated build scope excludes is `out of scope`, with the scope named in its evidence; it is neither passed nor unverified.
 
 - **Automated test exists and passes**: record its name and path.
 - **No test exists but one is possible**: write it at the level and location the plan row gives, following the repo's conventions, then run it and record the result. Use the `test-one` command to run single files while iterating; run the full suite once at the end.
@@ -39,14 +39,14 @@ Go through the rows of the plan's Test strategy table one by one, keeping the pl
 
 ### 3. Check for drift
 
-Note behavior that was implemented but isn't in the spec, and spec items with no corresponding implementation. Both are findings, even when the extra work looks useful.
+Note behavior that was implemented but isn't in the spec, and spec items with no corresponding implementation. Both are findings, even when the extra work looks useful. If the change leaves a path unvalidated or unapproved where the spec requires either, for example a field a schema change lets an existing endpoint persist without the new check, that is a failure, not drift and not out of scope, whichever task or ticket owns the full fix.
 
 ### 4. Write the report
 
-Fill `report-template.md` in this skill folder and save it as `.scratch/<feature-slug>/verify-report.md`, next to the plan. Set the result:
+Fill `report-template.md` in this skill folder, keeping its headings and status words exactly because `dev-build` and `dev-ship` read them, and save it as `.scratch/<feature-slug>/verify-report.md`, next to the plan. Set the result:
 
 - `PASS`: every gate that ran passes, ignoring failures marked pre-existing in step 1, and every criterion passed. A gate recorded as `none` or `skipped` doesn't block `PASS`; say why in its Notes.
-- `FAIL`: any gate fails because of the change, or any criterion failed.
-- `INCOMPLETE`: nothing failed, but at least one criterion is unverified.
+- `FAIL`: any gate fails because of the change, any criterion failed, or the change opens a path the spec requires to be validated or approved.
+- `INCOMPLETE`: nothing failed, but at least one criterion is unverified or out of scope.
 
-Then give the caller a short summary: the result line, counts of passed, failed and unverified, and one line per failure.
+Then give the caller a short summary: the result line, counts of passed, failed, unverified and out of scope, and one line per failure.

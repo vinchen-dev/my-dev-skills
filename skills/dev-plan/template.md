@@ -3,6 +3,7 @@
 Spec: {{path to spec.md, or the issue reference, e.g. #123}}
 Status: draft <!-- draft | approved | in progress | done -->
 Base: {{branch the work starts from; dev-build adds the commit, e.g. main @ 3f2a9c1}}
+WIP commits: not asked <!-- allowed | declined; dev-build writes the user's answer here in preflight -->
 
 ## Summary
 
@@ -31,7 +32,7 @@ One row per criterion, derived from the spec's user stories, testing decisions a
 
 ## Tasks
 
-Each task leaves the code working. Tick a task's checkbox when it is done; `dev-build` does this as it runs each task with `tdd`.
+Each task leaves the code working. Tick a task's checkbox when it is done; `dev-build` does this as it runs each task with `tdd`. A task a scoped build only partly covered stays unticked and gets a `Done so far:` line, written by `dev-build`, saying what was completed and what remains.
 
 ### - [ ] 1. {{Task title}}
 - Files: `{{path}}`, `{{path}}`

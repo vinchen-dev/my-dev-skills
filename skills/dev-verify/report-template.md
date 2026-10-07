@@ -18,7 +18,7 @@ Result: {{PASS | FAIL | INCOMPLETE}}
 
 | # | Criterion | Status | Evidence |
 |---|---|---|---|
-| 1 | {{criterion}} | passed / failed / unverified | {{test name and path, or what you ran and saw}} |
+| 1 | {{criterion}} | passed / failed / unverified / out of scope | {{test name and path, or what you ran and saw; for out of scope, the build scope that excludes it}} |
 
 ## Failures
 
