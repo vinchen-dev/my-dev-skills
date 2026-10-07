@@ -29,7 +29,7 @@ A local file (PDF, DOCX, Markdown, images or screenshots), a URL or Lark documen
    - how existing records are treated compared with new ones
    - approval, permission and audit-log behaviour
    - anything the spec explicitly says is unchanged, on this page or others
-3. **Detect gaps.** Empty headings, sections that end mid-sentence, roles or permissions named but never defined, rules that contradict each other, messages described but not written out. List them as decisions still to be made. Never fill a gap with a guess.
+3. **Detect gaps.** Empty headings, sections that end mid-sentence, roles or permissions named but never defined, rules that contradict each other, messages described but not written out. List them as decisions still to be made. Never fill a gap with a guess. A screenshot with no text beside it, such as a log entry under an empty heading, is spec content, not a gap: report what it shows as an item in its own group, say it comes from a screenshot, and list only what neither text nor screenshot answers as a gap.
 4. **Check the codebase only to confirm a name** the spec abbreviates, for example which page "Limits" refers to. Report nothing you find in code.
 5. **Group the changes by affected feature**, then split each feature's changes into review items using the rules below.
 6. **Write the output** with the template below, then stop. No offer to plan or implement.
@@ -39,7 +39,7 @@ A local file (PDF, DOCX, Markdown, images or screenshots), a URL or Lark documen
 Group by affected feature, then split each feature's changes into the smallest items a reader can check one at a time.
 
 - **A group is a feature or page as the user names it on screen**: a configuration page, an approval page, a log. Order the groups the way a user meets them: where things are configured, then where they are approved, then where they are recorded. Use the same names, in the same order, as the Affected features list.
-- **Inside a group, each change is its own numbered item.** One item holds one change and only the pieces that cannot be judged without it: a rule with its boundary cases and its exact error message; a new request type with its blocking rule and the message shown when blocked; a new field with its mandatory rule and how existing records are treated.
+- **Inside a group, each change is its own numbered item.** One item holds one change and only the pieces that cannot be judged without it: a rule with its boundary cases and its exact error message; a blocking rule with the message shown when blocked; a new field with its mandatory rule and how existing records are treated.
 - **Changes that can each be checked on their own are separate items**, even when one builds on the other. New fields and the save check that later uses them are two items. Two different checks on the same save are two items.
 - **If an item can be split without separating something from what it depends on, split it.** Number items continuously across groups, so the reader can refer to "change 5".
 - **Each item's title names the change in a few words**, with the mode or moment in brackets when it matters: Create and Edit, Batch Edit, on save.

@@ -41,7 +41,7 @@ Read `README.md` for the user-facing overview and the workflow diagram.
 - format: `none`
 - format-one: `none`
 
-`npm run validate` runs `claude plugin validate .`; also run it on `skills` and `agents` (`claude plugin validate skills`). To test an install, add the repo folder as a local marketplace: `claude plugin marketplace add <path>` then `claude plugin install my-dev-skills@my-dev-skills`, and check `claude plugin details my-dev-skills` lists 7 skills, 3 agents and 2 hooks. To test the guard, run `npm run test:guard`, which pipes every case in `hooks/guard-cases.txt` through it; `guard-commands.js` must exit 2 for a blocked command and 0 otherwise. To test the formatter, pipe hook JSON into it (see its header for the input shape).
+`npm run validate` runs `claude plugin validate .`; also run it on `skills` and `agents` (`claude plugin validate skills`). To test an install, add the repo folder as a local marketplace: `claude plugin marketplace add <path>` then `claude plugin install my-dev-skills@my-dev-skills`, and check `claude plugin details my-dev-skills` lists 8 skills, 3 agents and 2 hooks. To test the guard, run `npm run test:guard`, which pipes every case in `hooks/guard-cases.txt` through it; `guard-commands.js` must exit 2 for a blocked command and 0 otherwise. To test the formatter, pipe hook JSON into it (see its header for the input shape).
 
 ## Rules
 

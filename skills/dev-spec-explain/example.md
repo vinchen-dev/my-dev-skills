@@ -1,6 +1,6 @@
 # dev-spec-explain: worked example
 
-Input: a 14-page spec for a back-office tool, titled "Customer Transfer Range Validation". The reader is the operations team. The spec touches three features, so the output carries the At a glance table, and the changes split into five items. About 360 words plus the table:
+Input: a 14-page spec for a back-office tool, titled "Customer Transfer Range Validation". The reader is the operations team. The spec touches three features, so the output carries the At a glance table, and the changes split into eight items. About 440 words plus the table:
 
 > **Summary**
 > This feature stops staff from setting a customer's transfer limits to amounts the customer's account cannot actually handle. The system will now record the account's allowed range and refuse to save any Transfer Limit that falls outside it. Changing that allowed range becomes a new approval item.
@@ -34,12 +34,21 @@ Input: a 14-page spec for a back-office tool, titled "Customer Transfer Range Va
 > **Approvals page**
 >
 > 4. **Approval for changes to the allowed range**
->    A new request type, *Edit Allowed Transfer Range*, appears. Any change to the allowed range goes to approval, and the old range stays in effect until approved. Only roles configured under Approval Process can approve, and you cannot approve your own submission. The same customer cannot have both an *Edit Transfer Limit* and an *Edit Allowed Transfer Range* request pending at once. You will see "Pending approvals" with the request number and must wait until it is approved, rejected or cancelled.
+>    A new request type, *Edit Allowed Transfer Range*, appears. Any change to the allowed range goes to approval, and the old range stays in effect until approved.
+>
+> 5. **One pending range request per customer**
+>    The same customer cannot have both an *Edit Transfer Limit* and an *Edit Allowed Transfer Range* request pending at once. You will see "Pending approvals" with the request number and must wait until it is approved, rejected or cancelled.
+>
+> 6. **Approval limited to configured roles**
+>    Only roles configured under Approval Process can approve.
+>
+> 7. **You cannot approve your own submission**
+>    Requester and approver must be different people.
 >    Who is affected: whoever submits the change, and the approver roles.
 >
 > **Activity log**
 >
-> 5. **Range approvals in the log**
+> 8. **Range approvals in the log**
 >    Approvals of the new request type are logged with the Before and After allowed amounts, alongside the usual customer update entry.
 >
 > **What does not change**
@@ -48,6 +57,6 @@ Input: a 14-page spec for a back-office tool, titled "Customer Transfer Range Va
 > **One gap in the spec**
 > Section 8, Operation Permission, is empty. Which permission controls who can approve the new request type still needs to be defined.
 
-Why the shape is right: the three groups are the three places the reader will go to test, in the order they meet them, and they match the Affected features list. Inside the Customers page, items 2 and 3 are both checks on the same save but each can be tested without the other, so they are separate. Item 2 keeps its boundary cases and its error message together because a tester cannot judge the rule without them. Item 4 keeps the new request type, its blocking rule and the pending message together for the same reason.
+Why the shape is right: the three groups are the three places the reader will go to test, in the order they meet them, and they match the Affected features list. Inside the Customers page, items 2 and 3 are both checks on the same save but each can be tested without the other, so they are separate. Item 2 keeps its boundary cases and its error message together because a tester cannot judge the rule without them. Items 4 to 7 are four checks on the same approval that a tester can run one at a time, so they are separate even though 5 to 7 build on 4; item 5 keeps the blocking rule and its pending message together because a tester cannot judge one without the other.
 
 The first attempt at the same spec listed source files with line numbers, field identifiers, middleware order and tests to add. The user's correction was that they wanted "what feature would change and pages", for a user, not a coder. That first attempt was a code-impact report, which belongs to `dev-plan` and `dev-explorer`.

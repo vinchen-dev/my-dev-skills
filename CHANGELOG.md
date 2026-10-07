@@ -1,11 +1,12 @@
 # Changelog
 
-## 0.4.0 — unreleased
+## 0.5.0 — unreleased
 
-Hardening from the first real run of the workflow on a client repo.
+Hardening from the first real runs of the workflow on a client repo, and fixes from reviewing a dev-spec-explain run.
 
 - `dev-build` hardened after a real run: preflight stops when `docs/agents/issue-tracker.md`, the `Commands` section of `AGENTS.md` or `docs/standards.md` is missing, instead of letting the verifier and reviewer improvise; it branches off any shared branch, not only the default one; it records the work-in-progress answer in the plan's new `WIP commits:` field and writes `build-report.md` beside the plan; it builds plan tasks, by number or group when scoped, never tickets, and marks a partly covered task with a `Done so far:` line; and it hands the verifier nothing but paths and scope, so no gate can be skipped on instruction. `dev-verify` never invents gate commands, keeps one row per criterion, and gains an `out of scope` status that `dev-build` counts.
 - A path a change leaves unvalidated or unapproved where the spec requires either now fails verification and is must-fix in the round that opened it, whichever ticket owns the full fix. Found when a schema change let an existing batch endpoint persist new fields with no check, and the build deferred it to a later ticket.
+- `dev-spec-explain`, from reviewing a real run: a screenshot with no text beside it, such as a log entry under an empty heading, is spec content reported in its own group rather than a gap; and the item rule's own example no longer bundles separable checks, so the worked example now splits the approval section into four items, matching the rule it illustrates.
 
 ## 0.3.0 — 2026-10-06
 

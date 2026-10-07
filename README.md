@@ -169,9 +169,9 @@ Add the repo folder as a local marketplace in Claude Code and install from it, s
 
 Checked against the real tools (October 2026):
 
-- `claude plugin validate` passes for the plugin manifest, marketplace, skills and agents; a real marketplace install from the local path shows 7 skills, 3 agents and 2 hooks.
+- `claude plugin validate` passes for the plugin manifest, marketplace, skills and agents; a real marketplace install from the local path shows 8 skills, 3 agents and 2 hooks.
 - The `claude plugin marketplace add / install / update / uninstall / list` commands used by the installer exist with that syntax.
-- Installing from the published GitHub repo verified on both tools: `claude plugin marketplace add` plus `claude plugin install` loads 7 skills, 3 agents and 2 hooks, and `codex plugin marketplace add` plus `codex plugin add` installs on Codex. Claude Code clones over SSH first and falls back to HTTPS, so no GitHub SSH key is needed.
+- Installing from the published GitHub repo verified on both tools: `claude plugin marketplace add` plus `claude plugin install` loads 8 skills, 3 agents and 2 hooks, and `codex plugin marketplace add` plus `codex plugin add` installs on Codex. Claude Code clones over SSH first and falls back to HTTPS, so no GitHub SSH key is needed.
 - Matt's marketplace is `mattpocock`, his plugin `mattpocock-skills` (1.2.3 at the time). Every skill this workflow uses is in that release except `pr`, which is on his `main` branch after the 1.2.3 tag; his manifest pins the version, so `plugin update` won't fetch it until he bumps it, and `dev-ship` falls back to its own PR structure when `pr` is absent.
 - Matt's skills resolve from the plugin as `mattpocock-skills:<name>`, for example `mattpocock-skills:tdd`.
 - Codex 0.145 plugin commands match `CONFIG` (`plugin add`, `plugin remove`, `plugin list --json`, `plugin marketplace add`); the `.agents/plugins/marketplace.json` fields match Codex's bundled marketplaces; Codex user skills are scanned in both `~/.agents/skills` (documented) and `~/.codex/skills` (where the `skills` CLI writes).
