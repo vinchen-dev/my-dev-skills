@@ -1,12 +1,11 @@
 ---
 name: dev-mode
-description: Private feedback loop for the my-dev-skills workflow, for the plugin's maintainer. After a dev- skill or agent has run, reviews its result against the installed skill's own text with one agent, has a second agent try to refute every finding, and writes one self-contained feedback report rated CRITICAL, HIGH, MEDIUM or LOW, with the reason, the scenario where it recurs and the exact text change, ready to paste into a session in the my-dev-skills repo. In that repo, hands pasted feedback to an agent that decides whether to apply it. You invoke it; it never triggers on its own.
-disable-model-invocation: true
+description: Private feedback loop for the my-dev-skills workflow, for the plugin's maintainer. After a dev- skill or agent has run, reviews its result against the installed skill's own text with one agent, has a second agent try to refute every finding, and writes one self-contained feedback report rated CRITICAL, HIGH, MEDIUM or LOW, with the reason, the scenario where it recurs and the exact text change, ready to paste into a session in the my-dev-skills repo. In that repo, hands pasted feedback to an agent that decides whether to apply it. Use only when the user types /dev-mode, or when the file ~/.agents/dev-mode/ON exists and a dev- skill or agent has just finished in this turn. Never for any other request, however it is phrased, and never inside a subagent.
 ---
 
 # dev-mode
 
-A loop for improving `my-dev-skills` from real use. It ships with the plugin but is not documented, because it is for the maintainer. It has two sides, and the side you are on is decided by where you are:
+A loop for improving `my-dev-skills` from real use. It ships with the plugin but is not documented, because it is for the maintainer. It runs in exactly two cases: the user types `/dev-mode`, or the toggle file exists and a `dev-` skill or agent has just finished. The toggle rule needs the model to be able to invoke this skill, which is why its frontmatter does not carry `disable-model-invocation`; the description above is what keeps it from firing anywhere else. It has two sides, and the side you are on is decided by where you are:
 
 - **Producer**, on any device where the plugin is installed: after a `dev-` skill or agent runs, judge its output against the installed skill text, which is exactly the version that produced it, and write one report the user copies. Never change anything here.
 - **Consumer**, in a checkout of the `my-dev-skills` repo (the current folder has `package.json` with `"name": "my-dev-skills"`): take a pasted or saved report, re-check each finding against the current text, and apply what the user approves.
@@ -29,7 +28,7 @@ Where things are written:
 
 | Ran | Output to analyse | Contract, relative to this folder |
 |---|---|---|
-| `dev-standards` | the `AGENTS.md`, `CLAUDE.md` and `docs/standards.md` it wrote, and its summary | `../dev-standards/SKILL.md`, `template.md` |
+| `dev-standards` | the `AGENTS.md`, `CLAUDE.md` and `docs/standards.md` it wrote, and its summary | `../dev-standards/SKILL.md`, `template.md`, and `monorepos.md` when the repo is a monorepo |
 | `dev-plan` | `plan.md` | `../dev-plan/SKILL.md`, `template.md` |
 | `dev-verify`, `dev-verifier` | `verify-report.md` and the summary returned | `../dev-verify/SKILL.md`, `report-template.md`, `../../agents/dev-verifier.md` |
 | `dev-build` | `build-report.md`, the plan's edits, the diff, any wip commits | `../dev-build/SKILL.md` |

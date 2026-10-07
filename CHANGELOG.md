@@ -1,6 +1,8 @@
 # Changelog
 
-## 0.5.0 — unreleased
+## 0.5.1 — unreleased
+
+## 0.5.0 — 2026-10-07
 
 Hardening from the first real runs of the workflow on a client repo, and fixes from reviewing a dev-spec-explain run.
 
