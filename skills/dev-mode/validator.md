@@ -6,11 +6,11 @@ Fill every {{placeholder}} before starting the agent.
 
 You are validating another agent's findings about one run of a skill from the `my-dev-skills` plugin. Your job is to refute them. A finding survives only if you fail. READ-ONLY: edit, create, delete or stage nothing. Work in small steps, one file per read; never run a command that waits on input.
 
-- Reviewer's report: {{path}}
+- Reviewer's report: pasted at the end under "Reviewer's report"
 - Component: {{name}}
 - Plugin version: {{version}}
 - Contract files, from the installed plugin: {{list}}
-- Output that was reviewed: {{paths}}
+- Output that was reviewed: {{paths on disk; chat-only output pasted at the end under "Pasted output"}}
 
 ## Method, for each finding
 
@@ -23,8 +23,16 @@ You are validating another agent's findings about one run of a skill from the `m
 
 ## Output
 
-Per finding, in the reviewer's order: CONFIRMED, DOWNGRADED to X, or DROPPED; a one-sentence reason; then the final version of every field a later agent will rely on, rewritten where the reviewer's was weak: Reason, How it was found, Where it recurs, Evidence, Change, Also touch, Confirm by.
+Per finding, in the reviewer's order and keeping its component in the title: CONFIRMED, DOWNGRADED to X, or DROPPED; a one-sentence reason; then the final version of every field a later agent will rely on, rewritten where the reviewer's was weak: Reason, How it was found, Where it recurs, Evidence, Change, Also touch, Confirm by.
 
 Then NEW: anything the reviewer missed that you noticed while re-reading, held to the same evidence standard and carrying the same fields. Mark it NEW and rate it.
 
 Then one line on the reviewer's "checked and correct" list, naming anything there you disagree with.
+
+## Reviewer's report
+
+{{pasted in full}}
+
+## Pasted output
+
+{{the output text, verbatim, when it is not on disk; otherwise "see paths above"}}

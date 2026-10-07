@@ -1,6 +1,9 @@
 # Changelog
 
-## 0.5.1 — unreleased
+## 0.6.0 — unreleased
+
+- `dev-build` now states what it may write: code and tests for the plan's tasks, its own `build-report.md`, and the plan's bookkeeping fields (status, base, wip answer, checkboxes, `Done so far:`). It never edits the spec or the plan's content. The one exception is a gap the spec cannot answer: the user's decision is appended to the spec under `## Decisions during build`, dated, and mirrored in the plan's Decisions. Found when a build tried to rewrite the spec it was implementing.
+- Maintainer tooling added; no change to the documented skills beyond the above.
 
 ## 0.5.0 — 2026-10-07
 

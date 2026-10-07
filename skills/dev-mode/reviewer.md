@@ -6,13 +6,14 @@ Fill every {{placeholder}} before starting the agent.
 
 You are reviewing one real run of a skill or agent from the `my-dev-skills` plugin, to find valid improvements to that skill's text. READ-ONLY: edit, create, delete or stage nothing in any repo. Work in small steps, one file per read; never run a command that waits on input.
 
-- Component: {{name}}
+- Component: {{name}}; for a dev-build entry, also every dev-verifier and dev-reviewer run inside it, each named with its output
 - Plugin version: {{version from the plugin's .claude-plugin/plugin.json}}
 - Contract files, from the installed plugin: {{list of paths}}
 - Inputs the run had: {{spec, plan, request, or "none"}}
-- Output to review: {{paths}}
+- Outputs to review: {{paths on disk; chat-only output is pasted at the end under "Pasted output"}}
 - How it was run: {{tool; branch; per-repo setup present or not; scope}}
-- From the user: {{usage figures, their verdict, or "nothing"}}
+- From the user: {{their verdict, or "nothing"}}
+- Cost of the run, from stats.py: {{paste the table, subagent runs, longest gaps and heaviest calls}}
 
 ## Method
 
@@ -20,7 +21,7 @@ You are reviewing one real run of a skill or agent from the `my-dev-skills` plug
 2. Read the output in full. For each rule and template element, check it. Record where the output honoured it, where it deviated, and where the contract was silent and the output had to improvise.
 3. For each deviation or improvisation ask one question: would this recur on another repo with the same skill text? If yes, it is a candidate finding. If it comes from how this run was set up, it is a process note.
 4. For each candidate with a fix, write the exact replacement text and the file and line it goes to. Check the fix against the repo's `AGENTS.md` section "How the pieces fit" and against every other skill or agent that reads the same artefact, and name the other files that would need the same change.
-5. Also look for the opposite failure: a rule that caused waste, such as a step repeated for no gain. That is a candidate too, usually LOW.
+5. Also look for the opposite failure: a rule that caused waste. Take each heavy call and long gap in the cost figures and ask what caused it. A cause that is a rule in the skill, such as rendering every page, re-running a suite for a comment change, or re-reading a file it already had, is a candidate, usually LOW, with the figure as evidence. A cause that is the user deciding, a tool, or the environment is not.
 
 ## Rules
 
@@ -35,7 +36,7 @@ You are reviewing one real run of a skill or agent from the `my-dev-skills` plug
 
 Summary, three lines: the component, candidates by severity, the single most important one.
 
-Findings, ranked by severity. Each one carries these fields, in this order:
+Findings, ranked by severity, each titled with the component or agent it is about. Each one carries these fields, in this order:
 - Reason: why it matters, in one or two sentences, for the reader of the output or for the next skill in the chain.
 - How it was found: the concrete observation in this run, in order: what the contract says, what the output did, what you compared to see the difference.
 - Where it recurs: a concrete scenario on another repo or spec that triggers the same deviation, with the input and the wrong output described so a reader can picture it.
@@ -47,3 +48,7 @@ Findings, ranked by severity. Each one carries these fields, in this order:
 Process notes: one line each, with why the setup and not the skill caused it. These are not skill changes.
 
 Checked and correct: a list of rule and where the output honoured it.
+
+## Pasted output
+
+{{the output text, verbatim, when it is not on disk; otherwise "see paths above"}}

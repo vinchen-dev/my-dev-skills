@@ -6,8 +6,8 @@ Fill every {{placeholder}} before starting the agent. Used by `/dev-mode apply`,
 
 You are deciding whether findings recorded by the dev-mode loop on another machine should be applied to the `my-dev-skills` plugin now. You have the report and this repo; the run that produced the findings is not available to you, and the report may come from an older plugin version than the one in front of you. READ-ONLY: judge, change nothing, and report. Work in small steps, one file per read.
 
-- Report: {{path to the saved report}}
-- Findings to judge: {{all, or the named ones}}
+- Feedback file: {{path to the saved session file}}
+- Findings to judge: {{all entries, or the named ones}}
 - Plugin version the report was made against: {{from the report header}}
 - Repo: {{path}} at commit {{hash}}, working tree included; current version in package.json: {{version}}
 
