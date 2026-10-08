@@ -5,12 +5,13 @@ Used by dev-mode to put a Cost section in every feedback report, so a run that b
 tokens or stalls can be seen and explained.
 
   python3 stats.py --skill dev-build                 # from the last /dev-build (or Agent for it) to the next /dev-mode
+  python3 stats.py --skill dev-build --nth 1         # from the first /dev-build in the session instead of the last
   python3 stats.py --since 'regex' --until 'regex'   # any span, matched against the raw transcript lines
   python3 stats.py                                   # the whole session so far
   python3 stats.py --transcript path.jsonl ...       # a transcript other than this session's
 
-The transcript is ~/.claude/projects/<cwd with / replaced by ->/<session>.jsonl; the newest one
-for the current folder is used unless --transcript is given. Prints Markdown for the report.
+The transcript is ~/.claude/projects/<cwd with every non-alphanumeric character replaced by ->/<session>.jsonl;
+the newest one for the current folder is used unless --transcript is given. Prints Markdown for the report.
 """
 import argparse
 import datetime as dt
@@ -26,7 +27,7 @@ ACTIVE_GAP_S = 120  # a gap longer than this between two calls is taken as waiti
 
 
 def find_transcript():
-    enc = os.getcwd().replace("/", "-")
+    enc = re.sub(r"[^A-Za-z0-9]", "-", os.getcwd())
     folder = pathlib.Path.home() / ".claude" / "projects" / enc
     files = sorted(folder.glob("*.jsonl"), key=lambda p: p.stat().st_mtime, reverse=True)
     if not files:
@@ -53,6 +54,8 @@ def main():
     ap.add_argument("--transcript")
     ap.add_argument("--skill", help="component name; builds the --since regex for its invocation")
     ap.add_argument("--since", help="regex; the span starts at the LAST line matching it")
+    ap.add_argument("--nth", type=int, default=-1,
+                    help="which --since match starts the span: 1 is the first in the session, -1 (default) the last")
     ap.add_argument("--until", help="regex; the span ends before the first later line matching it",
                     default=r'<command-name>/dev-mode|"skill":\s*"dev-mode"')
     args = ap.parse_args()
@@ -61,7 +64,8 @@ def main():
     since = args.since
     if args.skill and not since:
         n = re.escape(args.skill)
-        since = rf'<command-name>/{n}\b|"skill":\s*"{n}"|"subagent_type":\s*"[^"]*{n}"'
+        # A skill can be invoked under its plugin namespace, /my-dev-skills:dev-build, so allow a prefix.
+        since = rf'<command-name>/(?:[\w-]+:)?{n}\b|"skill":\s*"(?:[\w-]+:)?{n}"|"subagent_type":\s*"[^"]*{n}"'
     since_re = re.compile(since) if since else None
     until_re = re.compile(args.until) if args.until else None
 
@@ -95,7 +99,9 @@ def main():
         hits = [i for i, t in enumerate(bounds) if t and since_re.search(t)]
         if not hits:
             sys.exit(f"stats: nothing in {path.name} matches --since")
-        start = hits[-1]
+        if args.nth == 0 or abs(args.nth) > len(hits):
+            sys.exit(f"stats: --nth {args.nth} is out of range; {len(hits)} match(es) of --since")
+        start = hits[args.nth - 1] if args.nth > 0 else hits[args.nth]
     end = len(lines)
     if until_re:
         for i in range(start + 1, len(lines)):
@@ -159,7 +165,7 @@ def main():
     print("## Cost")
     print()
     print(f"Span: {local(stamps[0])} to {local(stamps[-1])}, transcript `{path.name}`"
-          + (f", from the last match of `{since}`" if since else ", whole session"))
+          + (f", from match {args.nth} of `{since}`" if since else ", whole session"))
     print()
     print("| Calls | Output tokens | New input tokens | Cache-read tokens | Wall min | Active min |")
     print("|---|---|---|---|---|---|")

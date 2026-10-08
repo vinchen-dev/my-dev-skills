@@ -2,6 +2,7 @@
 
 Date: {{date}}
 Spec: {{path}} · Plan: {{path}} · Base: {{branch or commit}}
+Scope: {{whole plan, or the build scope the caller named; on a re-verify, the round, the rows re-proved and the files inspected}}
 Result: {{PASS | FAIL | INCOMPLETE}}
 
 ## Gates
@@ -11,8 +12,9 @@ Result: {{PASS | FAIL | INCOMPLETE}}
 | build | `{{command}}` | pass / fail / none | |
 | typecheck | `{{command}}` | pass / fail / none | |
 | lint | `{{command}}` | pass / fail / none | {{new errors only}} |
-| test | `{{command}}` | pass / fail | {{x passed, y failed, z pre-existing}} |
+| test | `{{command}}` | pass / fail | {{x passed, y failed, z pre-existing; or "no result", the error, and the test-one files run}} |
 | e2e | `{{command}}` | pass / fail / skipped | {{why skipped}} |
+<!-- One row per command per package when the change spans packages; name the package in the Command cell. -->
 
 ## Acceptance criteria
 
@@ -22,7 +24,7 @@ Result: {{PASS | FAIL | INCOMPLETE}}
 
 ## Failures
 
-### {{Criterion # or gate}}
+### {{Criterion #, gate, or Open path: <METHOD> <route>}}
 - Expected: {{from the spec}}
 - Actual: {{what happened}}
 - Test: `{{name and path}}`
@@ -37,6 +39,7 @@ Result: {{PASS | FAIL | INCOMPLETE}}
 
 - Implemented but not in the spec: {{item, or none}}
 - In the spec but not implemented: {{item, or none}}
+- In the spec but missing from the plan's Test strategy: {{item and the test that covers it, or none}}
 
 ## Tests added or changed
 

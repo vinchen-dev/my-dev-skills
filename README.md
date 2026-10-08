@@ -14,7 +14,7 @@ Per feature:     grill-me → to-spec → dev-plan → to-tickets (optional) →
 Bugs:            diagnosing-bugs
 ```
 
-With your permission, asked once at the start of a build, `dev-build` commits work in progress on a feature branch before each review pass, because Matt's `code-review` only sees committed work; `dev-ship` squashes those commits into one. If you decline, `dev-build` skips `code-review` and the dev-reviewer covers all axes. No commit or PR carries AI attribution. `to-tickets` is optional and feeds your tracker; `dev-build` works the plan's tasks, all of them or a subset you name by number or group, never tickets, and it stops at preflight until `dev-standards` has run.
+With your permission, asked once at the start of a build, `dev-build` commits work in progress on a feature branch before each review pass, because Matt's `code-review` only sees committed work; `dev-ship` squashes those commits into one. If you decline, `dev-build` skips `code-review` and the dev-reviewer covers all axes. No commit or PR carries AI attribution. `to-tickets` is optional and feeds your tracker; `dev-build` works the plan's tasks, all of them or the subset a ticket, task numbers or a group name scopes, matching a ticket to the plan's tasks and rows with your confirmation, and a ticket's checklist is never what it builds or verifies against. It stops at preflight until `dev-standards` has run.
 
 | Name | Type | Role | Edits code? |
 |---|---|---|---|

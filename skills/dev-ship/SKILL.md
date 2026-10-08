@@ -17,7 +17,7 @@ Turns completed work into something a reviewer can merge. It reads what the work
 
 ### 1. Confirm the change is ready
 
-Check that `verify-report.md` says `PASS` (or `INCOMPLETE` with unverified criteria the user has accepted) and that the plan's status is `done`. If not, say what's outstanding and ask whether to continue anyway.
+Check that `verify-report.md` says `PASS` (or `INCOMPLETE` with unverified criteria, or a gate with no result, that the user has accepted) and that the plan's status is `done`. If not, say what's outstanding and ask whether to continue anyway.
 
 Show the user the list of files to be committed. If it includes files that don't belong to the feature (stray edits, local config), ask before including them.
 
@@ -52,7 +52,7 @@ If Matt Pocock's `pr` skill is installed, use it to write the body, giving it th
 <Suggestions left open by the dev-build report, known limitations, follow-ups from the plan>
 ```
 
-Keep it short enough to read in a minute. Link the spec and plan if they live in the repo. No "Generated with" footer or other AI attribution.
+Keep it short enough to read in a minute. Link the spec and plan if they live in the repo. When the build report's Scope line names a ticket on a real tracker, add `Closes <ticket>` so the next ticket unblocks on merge; the ticket's checkboxes stay the user's to reconcile, and the verify report is the evidence. No "Generated with" footer or other AI attribution.
 
 ### 5. Ask, then act
 
