@@ -4,7 +4,8 @@ Spec: {{path to spec.md, or the issue reference, e.g. #123}}
 Status: draft <!-- draft | approved | in progress | done -->
 Base: {{branch the work starts from; dev-build adds the commit, e.g. main @ 3f2a9c1}}
 WIP commits: not asked <!-- allowed | declined; dev-build writes the user's answer here in preflight -->
-Fix rounds: 0 <!-- dev-build adds one per fix round with its failure keys and changed files; checked against the round limit; from round 2 the verifier and reviewer cover only the last entry -->
+Fix rounds: 0 <!-- dev-build adds one per fix round with its failure keys and changed files; checked against the round limit; from round 2 the verifier covers only the last entry -->
+Reviewed: none <!-- dev-build writes `through round <n>` after each review pass; the reviewer covers the whole change while this says none, afterwards the entries after that round -->
 Tickets: none <!-- dev-build writes the confirmed ticket → tasks and rows mapping here when a build is scoped by a ticket -->
 
 ## Summary
@@ -13,7 +14,7 @@ Tickets: none <!-- dev-build writes the confirmed ticket → tasks and rows mapp
 
 ## Approach
 
-{{How the change fits the codebase: which layers or modules it touches, what patterns it follows, any new concepts it introduces.}}
+{{How the change fits the codebase: which layers or modules it touches, what patterns it follows, any new concepts it introduces. When one request writes more than once: the order of the writes and what happens when a later one fails. For each new or changed path: its failure cases and how each is handled (status, message, rollback).}}
 
 ### Alternatives considered
 
@@ -21,7 +22,13 @@ Tickets: none <!-- dev-build writes the confirmed ticket → tasks and rows mapp
 
 ## Affected areas
 
-- `{{path}}` — {{what changes here}}
+Every file the change touches, including every consumer of what it modifies. `dev-build` treats a consumer missing here as a plan gap and stops.
+
+| Path | What changes | Changed because | Breaks without it | Task |
+|---|---|---|---|---|
+| `{{path}}` | {{the change}} | {{the changed function, field, shape or constant that reaches it}} | {{what a caller would see: wrong shape, crash, silent default}} | {{n}} |
+
+Unaffected consumers: {{`path` — uses X but reads only the unchanged field; or none}}
 
 ## Test strategy
 
@@ -31,6 +38,8 @@ One row per criterion, derived from the spec's user stories, testing decisions a
 |---|---|---|---|---|
 | 1 | {{criterion}} | unit / integration / e2e / manual | {{what the test checks}} | `{{path}}` |
 | 2 | {{when a data path changes: behaviour at the expected scale, or when a dependency fails}} | integration | {{what the test checks}} | `{{path}}` |
+| 3 | {{per endpoint touched: bad input (wrong type, null, unknown id, operator or dotted key) with the status and message expected}} | integration | {{what the test checks}} | `{{path}}` |
+| 4 | {{per rule the spec enforces: how a caller would get around it, and the refusal expected}} | integration | {{what the test checks}} | `{{path}}` |
 
 ## Tasks
 

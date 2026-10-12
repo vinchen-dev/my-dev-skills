@@ -9,26 +9,28 @@ Once per repo:   dev-standards   (setup-matt-pocock-skills only for an issue tra
 
 Per feature:     grill-me → to-spec → dev-plan → to-tickets (optional) → dev-build → dev-ship
                                                                              │
-                   implement (once) → verify ⇄ fix → code-review + dev-reviewer ⇄ fix → report
+                   implement (once) → verify + review the whole change → fix (one round) → recheck only what changed ⇄ fix → report
 
 Bugs:            diagnosing-bugs
 ```
 
 With your permission, asked once at the start of a build, `dev-build` commits work in progress on a feature branch before each review pass, because Matt's `code-review` only sees committed work; `dev-ship` squashes those commits into one. If you decline, `dev-build` skips `code-review` and the dev-reviewer covers all axes. No commit or PR carries AI attribution. `to-tickets` is optional and feeds your tracker; `dev-build` works the plan's tasks, all of them or the subset a ticket, task numbers or a group name scopes, matching a ticket to the plan's tasks and rows with your confirmation, and a ticket's checklist is never what it builds or verifies against. It stops at preflight until `dev-standards` has run.
 
+The first cycle checks everything: the verifier proves every row of the plan's test strategy while the reviewer (Matt's `code-review` plus the dev-reviewer) reads the whole change, and every finding from both is fixed in one round, test-first. Each later cycle rechecks only what that fix changed and the code that calls it, carries every other result forward, and still runs the build, lint and test gates in full. The plan records which rounds have been verified and reviewed, so the agents narrow from the plan rather than from the brief, and the loop stops after three fix rounds or when the same failure keeps coming back. Because the plan's test strategy already holds bad-input and abuse rows for every endpoint and rule the change touches, those cases are tested when the code is first written instead of surfacing cycle by cycle.
+
 | Name | Type | Role | Edits code? |
 |---|---|---|---|
 | `dev-standards` | Skill (this plugin) | Generates `AGENTS.md`, `CLAUDE.md` and `docs/standards.md` from repo evidence | Rules and docs only |
-| `dev-plan` | Skill (this plugin) | Technical design and a test strategy that derives acceptance criteria from the spec and maps each to a test | No |
-| `dev-verify` | Skill (this plugin) | Runs the repo's gates and proves each criterion; writes `verify-report.md` | Tests only |
-| `dev-build` | Skill (this plugin) | Orchestrates implement → verify → review, applies fixes, reports | Yes; work-in-progress commits only with your permission |
+| `dev-plan` | Skill (this plugin) | Technical design with every consumer of what changes and its fix, failure handling per path, and a test strategy that derives acceptance criteria from the spec, adds bad-input and abuse rows, and maps each to a test | No |
+| `dev-verify` | Skill (this plugin) | Runs the repo's gates and proves each criterion; on a re-verify, only the rows a fix touched or that depend on it; writes `verify-report.md` | Tests only |
+| `dev-build` | Skill (this plugin) | Orchestrates implement → verify and review together, then narrowed rechecks of each fix and its callers; applies fixes test-first; reports | Yes; work-in-progress commits only with your permission |
 | `dev-ship` | Skill (this plugin) | Commit message, PR description (via Matt's `pr` when installed), changelog entry | Commits only when asked |
 | `dev-commit-pr` | Skill (this plugin) | Writes commit messages and the PR title and body in the repo's format with the ticket id, from verified facts only. You invoke it; it never commits or pushes | No |
 | `dev-ticket-summary` | Skill (this plugin) | Condenses a finished investigation into a ticket-ready summary to paste. You invoke it; it is never triggered automatically | No |
 | `dev-spec-explain` | Skill (this plugin) | Explains a feature spec in plain language for product, QA, operations and support, lists the affected features, then groups the changes by feature with each change as its own small reviewable item, plus what does not change and gaps in the spec. Never reports code impact | No |
-| `dev-explorer` | Agent (this plugin) | Read-only codebase scan for `dev-plan` and `dev-standards`; optionally uses a Graphify knowledge graph and an Obsidian project vault, see below | No |
+| `dev-explorer` | Agent (this plugin) | Read-only codebase scan for `dev-plan` and `dev-standards`, tracing every consumer of what a change modifies; optionally uses a Graphify knowledge graph and an Obsidian project vault, see below | No |
 | `dev-verifier` | Agent (this plugin) | Runs `dev-verify` in an isolated context | Tests only |
-| `dev-reviewer` | Agent (this plugin) | Dedicated second look after `code-review`: tool output, performance and resource use, security, reliability, structure, tests | No |
+| `dev-reviewer` | Agent (this plugin) | Dedicated second look after `code-review`: tool output, performance and resource use, security, reliability, structure, tests; after its first pass, only the fix rounds since then and their callers | No |
 | Hooks | Hooks (this plugin) | Format each edited file with the repo's `format-one` command; block destructive git, database and publish commands | Enforced |
 | `grill-me`, `to-spec`, `to-tickets`, `tdd`, `code-review`, `diagnosing-bugs`, `setup-matt-pocock-skills`, and `pr` when present | Skills ([Matt Pocock](https://github.com/mattpocock/skills), installed separately) | Interview, spec, tickets, implementation, standards + spec review, debugging, per-repo setup, PR body | Varies |
 

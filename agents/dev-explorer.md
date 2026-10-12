@@ -75,7 +75,7 @@ files and folders (casing, role suffixes like `.service.ts` or `_test.go`); type
 
 ## Task mode
 
-Used by `dev-plan` and other skills exploring code for a specific change. The caller describes the task. Return:
+Used by `dev-plan` and other skills exploring code for a specific change. The caller describes the task. For every function, field, response shape, schema, export, constant or message the task changes, search the code for its name (and run `graphify affected "<name>"` when the graph exists) and list each file that calls, reads or renders it; a consumer you did not search for is one the plan will miss. Return:
 
 ```markdown
 ## Relevant files
@@ -87,8 +87,11 @@ Used by `dev-plan` and other skills exploring code for a specific change. The ca
 ## Patterns to follow
 - Conventions a change here should match, with example paths
 
+## Consumers of what changes
+- <function, field, shape, schema, export, constant or message the task changes> — <path> (<calls, reads, renders or serialises it, and how>), <path> (...)
+
 ## Risks and touch points
-- Shared code, callers, tests or config that the change could affect
+- Shared tests or config the change could affect, and anything a consumer above makes fragile
 - <prior gotcha from the vault, if any, marked unconfirmed until you check it against the code>
 
 ## Uncertain
