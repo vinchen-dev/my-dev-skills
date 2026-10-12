@@ -16,7 +16,7 @@ Creates the two per-repo files the rest of the workflow depends on. Every other 
 
 - Check each output file on its own. If AGENTS.md or docs/standards.md exists, follow **Update mode** below for that file. Generate a missing file per step 6 and present it as an addition in the same proposal.
 - If CLAUDE.md exists with real content (more than `@AGENTS.md`), plan to move that content into AGENTS.md. Confirm with the user before moving anything.
-- Check whether Matt Pocock's per-repo setup has run: it creates `docs/agents/issue-tracker.md` and `docs/agents/domain.md` (plus `docs/agents/triage-labels.md` when his `triage` skill is installed) and adds an `## Agent skills` block to `CLAUDE.md` if that exists, otherwise to `AGENTS.md`. Because it edits `CLAUDE.md` whenever one exists, the right order on a fresh repo is his `setup-matt-pocock-skills` first (answering `AGENTS.md` when it asks which file to create), then this skill. If neither file exists yet and his setup hasn't run, say so and offer to stop so the user can run it first. If it has run, preserve its block unchanged.
+- Check whether Matt Pocock's per-repo setup has run: it creates `docs/agents/issue-tracker.md` and `docs/agents/domain.md` (plus `docs/agents/triage-labels.md` when his `triage` skill is installed) and adds an `## Agent skills` block to `CLAUDE.md` if that exists, otherwise to `AGENTS.md`. His setup is optional, for repos whose specs live on an issue tracker. Because it edits `CLAUDE.md` whenever one exists, a user who wants it should run it first (answering `AGENTS.md` when it asks which file to create), then this skill; if neither file exists yet and his setup hasn't run, say that once and continue unless the user wants to run it first. If it has run, preserve its block unchanged.
 - Matt's `code-review` finds standards by looking for files that document how code should be written (it names `CODING_STANDARDS.md` and `CONTRIBUTING.md` as examples). The `## Standards` pointer in `AGENTS.md` is what makes `docs/standards.md` discoverable to it.
 
 ### 2. Gather evidence
@@ -125,7 +125,7 @@ Report to the user:
 - files created or changed
 - a commands table with key, command and status (works / fails / unverified)
 - the main decisions and where each came from
-- open items: failed or unverified commands, pre-existing test failures, whether `setup-matt-pocock-skills` still needs to run, and a reminder to confirm that `code-review` picks up `docs/standards.md` the first time it runs
+- open items: failed or unverified commands, pre-existing test failures, whether the user wants Matt's optional `setup-matt-pocock-skills` for an issue tracker, and a reminder to confirm that `code-review` picks up `docs/standards.md` the first time it runs
 
 Ask the user to review both files once. They are the only per-repo input to the whole workflow.
 

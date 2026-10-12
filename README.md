@@ -5,7 +5,7 @@ Plan, verify and build skills that extend [Matt Pocock's skills](https://github.
 ## The workflow
 
 ```
-Once per repo:   setup-matt-pocock-skills → dev-standards
+Once per repo:   dev-standards   (setup-matt-pocock-skills only for an issue tracker)
 
 Per feature:     grill-me → to-spec → dev-plan → to-tickets (optional) → dev-build → dev-ship
                                                                              │
@@ -23,6 +23,7 @@ With your permission, asked once at the start of a build, `dev-build` commits wo
 | `dev-verify` | Skill (this plugin) | Runs the repo's gates and proves each criterion; writes `verify-report.md` | Tests only |
 | `dev-build` | Skill (this plugin) | Orchestrates implement → verify → review, applies fixes, reports | Yes; work-in-progress commits only with your permission |
 | `dev-ship` | Skill (this plugin) | Commit message, PR description (via Matt's `pr` when installed), changelog entry | Commits only when asked |
+| `dev-commit-pr` | Skill (this plugin) | Writes commit messages and the PR title and body in the repo's format with the ticket id, from verified facts only. You invoke it; it never commits or pushes | No |
 | `dev-ticket-summary` | Skill (this plugin) | Condenses a finished investigation into a ticket-ready summary to paste. You invoke it; it is never triggered automatically | No |
 | `dev-spec-explain` | Skill (this plugin) | Explains a feature spec in plain language for product, QA, operations and support, lists the affected features, then groups the changes by feature with each change as its own small reviewable item, plus what does not change and gaps in the spec. Never reports code impact | No |
 | `dev-explorer` | Agent (this plugin) | Read-only codebase scan for `dev-plan` and `dev-standards`; optionally uses a Graphify knowledge graph and an Obsidian project vault, see below | No |
@@ -54,7 +55,7 @@ codex plugin add my-dev-skills@my-dev-skills
 
 Then install Matt's skills separately in Codex, from his own repo. Codex gets the skills only, since agents and hooks are Claude Code concepts.
 
-**You must install [Matt Pocock's skills](https://github.com/mattpocock/skills) as well. They are a hard dependency, not an optional extra.** `dev-build` calls his `tdd` and `code-review` by name and stops at preflight if they are missing, and the per-repo setup below starts with his `setup-matt-pocock-skills`. They install from his own marketplace rather than being re-listed in this one, so his updates reach you directly from [mattpocock/skills](https://github.com/mattpocock/skills). The `npx` installer does the same thing with `--matt`.
+**You must install [Matt Pocock's skills](https://github.com/mattpocock/skills) as well. They are a hard dependency, not an optional extra.** `dev-build` calls his `tdd` and `code-review` by name and stops at preflight if they are missing. His `setup-matt-pocock-skills` is optional: run it only when your specs live on a GitHub or GitLab issue tracker. They install from his own marketplace rather than being re-listed in this one, so his updates reach you directly from [mattpocock/skills](https://github.com/mattpocock/skills). The `npx` installer does the same thing with `--matt`.
 
 ### Or install once for both tools
 
@@ -128,7 +129,7 @@ Start a new session in each tool afterwards for the change to take effect.
 
 ## Per-repo setup
 
-1. Run Matt's `setup-matt-pocock-skills`. When it asks which file to create, answer `AGENTS.md`. It writes `docs/agents/issue-tracker.md` and `docs/agents/domain.md` (plus `docs/agents/triage-labels.md` when his `triage` skill is installed), and adds an `## Agent skills` block.
+1. Optional, only when your specs live on a GitHub or GitLab issue tracker: run Matt's `setup-matt-pocock-skills` and answer `AGENTS.md` when it asks which file to create. It writes `docs/agents/issue-tracker.md` and `docs/agents/domain.md` (plus `docs/agents/triage-labels.md` when his `triage` skill is installed) and adds an `## Agent skills` block. Run it before `dev-standards` on a fresh repo, because it edits `CLAUDE.md` whenever one exists and Codex only reads `AGENTS.md`. With local specs, skip it.
 2. Run `dev-standards`. It scans the codebase, verifies the real commands, asks a handful of questions, and writes or updates:
 
 ```
@@ -136,12 +137,11 @@ your-project/
 ├── AGENTS.md              # commands, protected paths, workflow rules (+ Matt's Agent skills block)
 ├── CLAUDE.md              # @AGENTS.md
 ├── docs/standards.md      # naming, structure, size, error handling, testing, performance, security
-└── .scratch/<feature>/    # per feature: spec.md (from to-spec, if local tracker), plan.md, verify-report.md, build-report.md
+└── .scratch/<feature>/    # per feature: spec.md (from to-spec, or any path you name), plan.md, verify-report.md, build-report.md
 ```
 
 Review `AGENTS.md` and `docs/standards.md` once. They are the only per-repo input to the workflow. Re-run `dev-standards` after major changes; it proposes updates, applies only what you approve, and never touches rules you wrote in `docs/standards.md`.
 
-The order matters: Matt's setup edits `CLAUDE.md` whenever one exists, and Codex only reads `AGENTS.md`.
 
 ## Repo layout
 

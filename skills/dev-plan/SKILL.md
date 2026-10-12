@@ -9,7 +9,7 @@ Produces `plan.md`: the bridge between a spec (what to build) and implementation
 
 ## Inputs
 
-- The spec. `to-spec` publishes it to the repo's issue tracker as configured in `docs/agents/issue-tracker.md`: a file at `.scratch/<feature-slug>/spec.md` for local markdown, or a GitHub/GitLab issue fetched by that file's workflow. If the user gave an issue number or path, start there; otherwise ask.
+- The spec: the path or issue the user gave, otherwise `.scratch/<feature-slug>/spec.md`, where `to-spec` writes it for a local tracker. When it is an issue, fetch it the way `docs/agents/issue-tracker.md` says if that file exists, otherwise with the tracker's CLI. If you cannot find it, ask; Matt's `setup-matt-pocock-skills` is optional and never required.
 - `AGENTS.md` for commands, protected paths and workflow rules.
 - `docs/standards.md` for conventions the design must follow.
 - `template.md` in this skill folder for the plan layout.

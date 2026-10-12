@@ -33,24 +33,13 @@ If the repo has a changelog (`CHANGELOG.md` or similar), add an entry under the 
 
 ### 4. Write the PR description
 
-If Matt Pocock's `pr` skill is installed, use it to write the body, giving it the spec, plan and verify report as inputs. Otherwise use this structure:
+If Matt Pocock's `pr` skill is installed, use it to write the body, giving it the spec, plan and verify report as inputs. Otherwise use the PR title and body template in `../dev-commit-pr/SKILL.md` (Summary, Changes, Testing, Deploy notes, Out of scope), filled from these sources:
 
-```
-## What
-<Two or three sentences from the spec's goal and the plan's summary>
-
-## Why
-<The problem or need, from the spec>
-
-## How
-<Approach in a few lines; notable decisions from the plan's Decisions section>
-
-## Verification
-<Gate results and criteria counts from verify-report.md; how to try it manually if relevant>
-
-## Notes for reviewers
-<Suggestions left open by the dev-build report, known limitations, follow-ups from the plan>
-```
+- Summary and the Spec line: the spec's goal and the plan's summary.
+- Changes: the diff since the plan's `Base:`, grouped by area, with notable decisions from the plan's Decisions section.
+- Testing: gate results and criteria counts from `verify-report.md`, and manual checks the user reported.
+- Deploy notes: permissions, config keys, migrations or backfills the change needs, or "None".
+- Out of scope: suggestions and still-open items from the dev-build report, and the plan's follow-ups.
 
 Keep it short enough to read in a minute. Link the spec and plan if they live in the repo. When the build report's Scope line names a ticket on a real tracker, add `Closes <ticket>` so the next ticket unblocks on merge; the ticket's checkboxes stay the user's to reconcile, and the verify report is the evidence. No "Generated with" footer or other AI attribution.
 
