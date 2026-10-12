@@ -38,6 +38,7 @@ Used by `dev-standards`. Return exactly these sections:
 ```markdown
 ## Stack
 - Languages, frameworks and versions, with the file each came from
+- The data layer (ORM, ODM or driver) and where it declares indexes: a schema option, a migration or a decorator, with one example path
 
 ## Repo shape
 - Single app or monorepo (workspace config), top-level layout
@@ -75,7 +76,7 @@ files and folders (casing, role suffixes like `.service.ts` or `_test.go`); type
 
 ## Task mode
 
-Used by `dev-plan` and other skills exploring code for a specific change. The caller describes the task. For every function, field, response shape, schema, export, constant or message the task changes, search the code for its name (and run `graphify affected "<name>"` when the graph exists) and list each file that calls, reads or renders it; a consumer you did not search for is one the plan will miss. Return:
+Used by `dev-plan` and other skills exploring code for a specific change. The caller describes the task. For every function, field, response shape, schema, export, constant or message the task changes, search the code for its name (and run `graphify affected "<name>"` when the graph exists) and list each file that calls, reads or renders it; a consumer you did not search for is one the plan will miss. For each collection or table the task queries, read its schema or migration file and list the indexes declared on it, so the plan can tell whether a new or changed query is covered. Return:
 
 ```markdown
 ## Relevant files
@@ -83,6 +84,7 @@ Used by `dev-plan` and other skills exploring code for a specific change. The ca
 
 ## How it works now
 - Short description of the current flow, with paths
+- <collection or table the task queries> — indexes declared on it, with the file that declares them, or `none declared`
 
 ## Patterns to follow
 - Conventions a change here should match, with example paths

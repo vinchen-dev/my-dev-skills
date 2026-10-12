@@ -78,6 +78,7 @@ Expected scale: {{e.g. internal tool, ~50 users / public API, ~1M requests per d
 
 - Must: No database queries or network calls inside loops when they can be batched or joined. <!-- src: default -->
 - Must: Bound unbounded work. Paginate or limit result sets, and set timeouts on external calls. <!-- src: default -->
+- Must: A query's filter and sort fields are covered by a declared index ({{how this repo declares them, e.g. Mongoose `index: true`, a migration}}), or the plan says why the collection stays small enough not to need one. The index ships with the query that needs it. <!-- src: default -->
 - Must: Don't load large files or datasets fully into memory when they can be streamed or processed in chunks. <!-- src: default -->
 - Must: Release what you acquire, on the error path too. Close files, connections, streams and listeners, clear timers, and give every cache a size or time bound. <!-- src: default -->
 - Prefer: Don't block request handlers or the event loop with slow synchronous work. <!-- src: default -->
