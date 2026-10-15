@@ -20,7 +20,7 @@ Writes the text a reviewer reads: one commit message per commit you are about to
 
 1. **Find the format.** Read the commit format from the repo's `AGENTS.md` (or `CONTRIBUTING.md`), and the last 20 subjects with `git log --oneline -20`. Use the format the repo states; when it allows two placements of the ticket id, use the one the branch's existing commits use, and stay consistent. With no stated format, use the default below.
 2. **Find the ticket id.** From the branch name, the existing commit subjects, or the user. Every commit subject and the PR title carry it. If none can be found, ask once.
-3. **Collect the facts.** Use the table below. Read the diff, not just the file list: group changes by area as a reviewer would look at them.
+3. **Collect the facts.** Use the table below. Read the diff, not just the file list: group changes by area as a reviewer would look at them. Take the stat first, then read the diff without lockfiles, snapshots and the generated paths `AGENTS.md` protects (for example `git diff <base>...HEAD -- . ':!package-lock.json' ':!**/__snapshots__/**'`); the stat still lists them.
 4. **Write** the commit messages, then the PR title and body, with the templates below. Read `example.md` in this folder the first time in a session, or when unsure how much detail a bullet carries.
 5. **Check** against the list at the end, then give the user the text.
 

@@ -1,6 +1,6 @@
 ---
 name: dev-mode
-description: Private feedback loop for the my-dev-skills workflow, for the plugin's maintainer. Between /dev-mode start and /dev-mode end, each top-level dev- skill that finishes is reviewed against the installed skill's own text by one agent, refuted by a second, and the surviving findings, rated CRITICAL, HIGH, MEDIUM or LOW with the reason, the recurrence scenario, the exact text change and the run's token and time cost, are appended to one feedback file in the project, ready to paste into a session in the my-dev-skills repo, where /dev-mode apply hands them to an agent that decides whether to apply them. Use only when the user types /dev-mode, or when the file ~/.agents/dev-mode/ON exists and a top-level dev- skill (not an agent inside dev-build) has just finished in this turn. Never for any other request, and never inside a subagent.
+description: Private feedback loop for the my-dev-skills workflow, for the plugin's maintainer. Between /dev-mode start and /dev-mode end, each top-level dev- skill that finishes is reviewed against the installed skill's text by one agent and refuted by a second, and the surviving findings, rated and with the exact text change and the run's cost, go into one feedback file for /dev-mode apply in the my-dev-skills repo. Use only when the user types /dev-mode, or when the file ~/.agents/dev-mode/ON exists and a top-level dev- skill (not an agent inside dev-build) has just finished in this turn. Never for any other request, and never inside a subagent.
 ---
 
 # dev-mode

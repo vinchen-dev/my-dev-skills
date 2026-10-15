@@ -10,7 +10,7 @@ Turns completed work into something a reviewer can merge. It reads what the work
 ## Inputs
 
 - `AGENTS.md`: commit message format, branch conventions and any PR rules.
-- `.scratch/<feature-slug>/plan.md`, `verify-report.md` and `build-report.md` beside it, and the spec the plan points to. The plan's `WIP commits:` field says whether there are work-in-progress commits to squash.
+- `.scratch/<feature-slug>/plan.md`, `verify-report.md` and `build-report.md` beside it, and the spec the plan points to. Read only what the steps use: the plan's header fields plus its Summary, Affected areas, Decisions and Out of scope sections; the verify report from its top through the Gates table, plus Failures and Unverified when its `Result:` is not `PASS`; the build report whole; the spec only when the plan's Summary does not state the goal. The plan's `WIP commits:` field says whether there are work-in-progress commits to squash.
 - `git status`, and `git diff <base>...HEAD --stat` with the base from the plan's `Base:` field, to confirm what the feature commit will contain, including dev-build's work-in-progress commits.
 
 ## Workflow
@@ -35,9 +35,9 @@ If the repo has a changelog (`CHANGELOG.md` or similar), add an entry under the 
 
 If Matt Pocock's `pr` skill is installed, use it to write the body, giving it the spec, plan and verify report as inputs. Otherwise use the PR title and body template in `../dev-commit-pr/SKILL.md` (Summary, Changes, Testing, Deploy notes, Out of scope), filled from these sources:
 
-- Summary and the Spec line: the spec's goal and the plan's summary.
+- Summary and the Spec line: the plan's summary, and the spec's goal when the summary does not state it.
 - Changes: the diff since the plan's `Base:`, grouped by area, with notable decisions from the plan's Decisions section.
-- Testing: gate results and criteria counts from `verify-report.md`, and manual checks the user reported.
+- Testing: gate results from `verify-report.md`, the criteria counts from the build report's `Criteria:` line (count the verify report's Status column when there is no build report), and manual checks the user reported.
 - Deploy notes: permissions, config keys, migrations or backfills the change needs, or "None".
 - Out of scope: suggestions and still-open items from the dev-build report, and the plan's follow-ups.
 

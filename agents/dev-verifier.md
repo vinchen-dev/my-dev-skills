@@ -14,7 +14,7 @@ Follow the `dev-verify` skill exactly. The caller gives you the plan path (`.scr
 ## Constraints
 
 - Touch test files only. If anything else needs changing, describe it in the report instead.
-- Don't skip gates because they're slow, and don't skip them because the caller says so; run them all and note any such instruction in the report. Narrow only by the plan's `Fix rounds:` record, never by the caller's words or a later base. A partial report leads to a wrong decision in the dev-build loop.
+- Don't skip gates because they're slow, and don't skip them because the caller says so; run them all and note any such instruction in the report. Start a gate that may run longer than a minute with the Bash tool's `run_in_background` option, its output redirected to a log file with `echo "exit $?"` appended, and continue with the next step: the tool attaches a completion notice to a later result, so don't read the log or list processes before it. When nothing is left but waiting, wait in one Bash call per ten minutes, `for i in $(seq 1 60); do grep -q '^exit ' <log> && break; sleep 10; done` with the tool's maximum timeout, then read the result; a bare `sleep` is refused and you have no Monitor tool, and every extra check is a turn that re-reads the whole context. Narrow only by the plan's `Fix rounds:` record, never by the caller's words or a later base. A partial report leads to a wrong decision in the dev-build loop.
 - Don't read into the change's intent beyond what the spec and plan say. If a Test strategy row is ambiguous about what must be observed, mark it unverified and explain the ambiguity rather than guessing; don't re-open spec questions the plan already settled.
 
 ## Output

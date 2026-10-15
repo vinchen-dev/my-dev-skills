@@ -24,7 +24,7 @@ Stop and tell the user if:
 
 ### 1. Understand the change
 
-Read the spec, `AGENTS.md` and `docs/standards.md`. Then explore the code: delegate to the `dev-explorer` agent in task mode with a description of the change, or explore yourself if the agent isn't available. You need to know where the change lands, how that area works now, which patterns to follow, and every consumer of what you will change: for each function, field, response shape, schema, export, constant or message the change modifies, search the code for its name yourself (and run `graphify affected` when the repo has a graph), even when the explorer already listed consumers, because one source is never trusted. That list is what makes the plan complete.
+Read the spec, `AGENTS.md` and `docs/standards.md`. Then delegate the whole scan, every area the change touches on every side, to the `dev-explorer` agent in task mode with a description of the change, and wait for its report: pass `run_in_background: false` where the Agent tool has that flag, otherwise do nothing else until its hand-back arrives. Explore yourself only when there is no Agent tool. You need to know where the change lands, how that area works now, which patterns to follow, and every consumer of what you will change. When the report arrives, verify it rather than repeat it: for each function, field, response shape, schema, export, constant or message the change modifies, run one search for its name (`grep -rn`, and `graphify affected "<name>"` when the repo has a graph, several names per command), and open code by line range around the report's citations and your hits rather than whole files. One source is never trusted, so the searches are not optional, even when the explorer already listed consumers. That list is what makes the plan complete.
 
 ### 2. Design the approach
 
@@ -48,7 +48,7 @@ Fill `template.md` and save it as `.scratch/<feature-slug>/plan.md`. When the sp
 
 ### 7. Present and wait
 
-Summarize the approach and the task list in a few sentences, then wait for approval. Set the status to `approved` only when the user says so. `dev-build` checks this status before starting.
+Summarize the approach and the task list in a few sentences, then wait for approval. Set the status to `approved` only when the user says so. `dev-build` checks this status before starting; tell the user to run it in a new session, since everything it needs is in the plan and the spec, and a session that still holds this conversation carries it into every build turn.
 
 ## Rules
 

@@ -48,7 +48,9 @@ if (!command) process.exit(0);
 
 const hit = RULES.find((r) => r.re.test(command));
 if (hit) {
-  process.stderr.write(`Blocked by my-dev-skills guard: ${hit.why}. Ask the user to run this themselves if it's intended:\n  ${command}\n`);
+  // The model already holds the full command; echo only its start so a long heredoc doesn't re-enter the context.
+  const shown = command.length > 200 ? command.slice(0, 200) + "…" : command;
+  process.stderr.write(`Blocked by my-dev-skills guard: ${hit.why}. Ask the user to run this themselves if it's intended:\n  ${shown}\n`);
   process.exit(2);
 }
 process.exit(0);

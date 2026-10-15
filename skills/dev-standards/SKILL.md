@@ -33,7 +33,7 @@ Delegate the scan to the `dev-explorer` agent in **standards mode** if it is ava
 
 ### 3. Verify commands
 
-Find candidates for these keys: `test`, `test-one` (run a single test file), `lint`, `typecheck`, `build`, `e2e`, `format`, `format-one` (format a single file; the plugin's post-edit hook uses it). Then run each one.
+Find candidates for these keys: `test`, `test-one` (run a single test file), `lint`, `typecheck`, `build`, `e2e`, `format`, `format-one` (format a single file; the plugin's post-edit hook uses it). Then run each one with its output redirected to a file, and read back the exit status and the last 40 lines; open the file only when the runner's summary is not in them. The whole output of a test or build run would otherwise sit in your context for every later step.
 
 - Never run commands that deploy, publish, release, migrate or seed databases, delete data, or push to git.
 - For `format` and `format-one`, run only a check or dry-run variant (for example `--check` in place of `--write`), but record the formatting command itself, since the post-edit hook runs it to format files. Never run the variant that rewrites files. If no check variant exists, record the command and mark it unverified.
