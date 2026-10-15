@@ -1,6 +1,8 @@
 # Changelog
 
-## 0.8.0 — unreleased
+## 0.9.0 — unreleased
+
+## 0.8.0 — 2026-10-15
 
 - New skill `dev-commit-pr`, invoked with `/dev-commit-pr`: writes commit messages and the PR title and body for finished work in the repo's commit format with the ticket id, as GitHub Markdown with Summary, Changes, Testing, Deploy notes and Out of scope, from verified facts only and with no AI attribution. It writes text and never commits or pushes. `dev-ship` now uses the same PR shape when Matt's `pr` skill is not installed.
 - Matt's `setup-matt-pocock-skills` is no longer required. No skill stops when `docs/agents/issue-tracker.md` is missing: the spec is the path the user names or `.scratch/<feature-slug>/spec.md`, and the tracker file is read only when it exists and the spec is an issue. `dev-build` used to stop at preflight without it.
