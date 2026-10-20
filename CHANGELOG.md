@@ -1,6 +1,13 @@
 # Changelog
 
-## 0.9.0 — unreleased
+## 0.9.1 — unreleased
+
+- Fewer repeated reads, found by benchmarking 0.9.0 against 0.8.0 on the same three features: the plan session re-read the files the `dev-explorer` had just reported on, the build re-read the modules the plan's Approach already cites before its first test, the verifier ran the full suite twice in a pass whenever it added tests, and the reviewer ran tests the verifier had already run. `dev-plan` now opens code only around a search hit the explorer's report does not list, cites the report's `file:line`, and asks the explorer a follow-up instead of reading; `dev-build` reads a task's files by the plan's cited ranges in one or two batched calls and treats the Approach as the design; `dev-verify` runs the suite once in the gates and only the added files afterwards; the `dev-reviewer` never runs tests.
+- `dev-build` never schedules a wakeup or timer while the verifier and reviewer run: one fired after a finished build and re-entered dev-build on top of its report. Their completion notices are the signal.
+- Plans stay near the 150-line limit: the Approach states the design and the order of writes and points at the Test strategy row that carries each check's status and message instead of restating them, since the build and every verifier and reviewer pass read the whole plan.
+## 0.9.0 — 2026-10-15
+
+- No changes: the version was opened for the next batch and shipped with the 0.8.0 content.
 
 ## 0.8.0 — 2026-10-15
 

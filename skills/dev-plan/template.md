@@ -14,7 +14,7 @@ Tickets: none <!-- dev-build writes the confirmed ticket → tasks and rows mapp
 
 ## Approach
 
-{{How the change fits the codebase: which layers or modules it touches, what patterns it follows, any new concepts it introduces. When one request writes more than once: the order of the writes and what happens when a later one fails. For each new or changed path: its failure cases and how each is handled (status, message, rollback).}}
+{{How the change fits the codebase: which layers or modules it touches, what patterns it follows, any new concepts it introduces. When one request writes more than once: the order of the writes and what happens when a later one fails. For each new or changed path: its failure cases and what each rolls back, with the number of the Test strategy row that carries the status and message, not the status and message themselves.}}
 
 ### Alternatives considered
 
