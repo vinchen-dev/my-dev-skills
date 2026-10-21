@@ -18,7 +18,7 @@ Input: a 14-page spec for a back-office tool, titled "Customer Transfer Range Va
 > | Approvals page | Only Edit Transfer Limit requests | New Edit Allowed Transfer Range request; the two block each other per customer |
 > | Activity log | Limit changes logged | Range approvals logged with Before and After values |
 >
-> **Changes, grouped by feature**
+> **Changes, grouped by related part**
 >
 > **Customers page**
 >
@@ -31,7 +31,7 @@ Input: a 14-page spec for a back-office tool, titled "Customer Transfer Range Va
 > 3. **Changing the allowed range on an existing customer** (on save)
 >    When you fill in or change the allowed range, the system checks that customer's current Transfer Limit against the new range. If the current limit sits outside it, the save is blocked and you must fix the Transfer Limit first.
 >
-> **Approvals page**
+> **Approvals page and activity log**
 >
 > 4. **Approval for changes to the allowed range**
 >    A new request type, *Edit Allowed Transfer Range*, appears. Any change to the allowed range goes to approval, and the old range stays in effect until approved.
@@ -46,8 +46,6 @@ Input: a 14-page spec for a back-office tool, titled "Customer Transfer Range Va
 >    Requester and approver must be different people.
 >    Who is affected: whoever submits the change, and the approver roles.
 >
-> **Activity log**
->
 > 8. **Range approvals in the log**
 >    Approvals of the new request type are logged with the Before and After allowed amounts, alongside the usual customer update entry.
 >
@@ -57,6 +55,6 @@ Input: a 14-page spec for a back-office tool, titled "Customer Transfer Range Va
 > **One gap in the spec**
 > Section 8, Operation Permission, is empty. Which permission controls who can approve the new request type still needs to be defined.
 
-Why the shape is right: the three groups are the three places the reader will go to test, in the order they meet them, and they match the Affected features list. Inside the Customers page, items 2 and 3 are both checks on the same save but each can be tested without the other, so they are separate. Item 2 keeps its boundary cases and its error message together because a tester cannot judge the rule without them. Items 4 to 7 are four checks on the same approval that a tester can run one at a time, so they are separate even though 5 to 7 build on 4; item 5 keeps the blocking rule and its pending message together because a tester cannot judge one without the other.
+Why the shape is right: the Customers page is a medium change on its own, so it is a group. The approval and its log entry are small and belong together, so they share one group rather than leaving the single log item under a heading of its own; the Affected features list still names the log, because the list is the scope check, not the headings. The groups run in the order the work flows: where the range is set, then where it is approved and recorded. Inside the Customers page, items 2 and 3 are both checks on the same save but each can be tested without the other, so they are separate. Item 2 keeps its boundary cases and its error message together because a tester cannot judge the rule without them. Items 4 to 7 are four checks on the same approval that a tester can run one at a time, so they are separate even though 5 to 7 build on 4; item 5 keeps the blocking rule and its pending message together because a tester cannot judge one without the other.
 
 The first attempt at the same spec listed source files with line numbers, field identifiers, middleware order and tests to add. The user's correction was that they wanted "what feature would change and pages", for a user, not a coder. That first attempt was a code-impact report, which belongs to `dev-plan` and `dev-explorer`.

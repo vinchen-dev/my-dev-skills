@@ -1,6 +1,6 @@
 ---
 name: dev-spec-explain
-description: Explain a feature spec in plain language for non-technical readers such as product owners, QA, operations and support. Use when the user shares a spec (PDF, DOCX, Markdown, Lark page, screenshots or pasted text) and asks to summarize it, explain what changes, or describe it for users rather than developers. Output lists the affected features, then groups the changes by feature (the configuration page, the approval page, the log) with each change as its own small item a reader can check on its own, with on-screen labels, exact message text, what does not change, and gaps in the spec. Not for code-impact analysis or implementation planning; hand those to dev-plan or a dev-explorer scan.
+description: Explain a feature spec in plain language for non-technical readers such as product owners, QA, operations and support. Use when the user shares a spec (PDF, DOCX, Markdown, Lark page, screenshots or pasted text) and asks to summarize it, explain what changes, or describe it for users rather than developers. Output lists the affected features, then groups related changes together, one group per part or module when a change is large and a few groups such as the server rules and the screens when the changes are many and small, with each change as its own item a reader can check on its own, with on-screen labels, exact message text, what does not change, and gaps in the spec. Not for code-impact analysis or implementation planning; hand those to dev-plan or a dev-explorer scan.
 ---
 
 # dev-spec-explain
@@ -31,20 +31,20 @@ A local file (PDF, DOCX, Markdown, images or screenshots), a URL or Lark documen
    - anything the spec explicitly says is unchanged, on this page or others
 3. **Detect gaps.** Empty headings, sections that end mid-sentence, roles or permissions named but never defined, rules that contradict each other, messages described but not written out. List them as decisions still to be made. Never fill a gap with a guess. A screenshot with no text beside it, such as a log entry under an empty heading, is spec content, not a gap: report what it shows as an item in its own group, say it comes from a screenshot, and list only what neither text nor screenshot answers as a gap.
 4. **Check the codebase only to confirm a name** the spec abbreviates, for example which page "Limits" refers to. Report nothing you find in code.
-5. **Group the changes by affected feature**, then split each feature's changes into review items using the rules below.
+5. **Group the changes by how related they are**, then split each group's changes into review items using the rules below.
 6. **Write the output** with the template below, then stop. No offer to plan or implement.
 
 ## Grouping rules
 
-Group by affected feature, then split each feature's changes into the smallest items a reader can check one at a time.
+Group changes that belong together, then split each group's changes into the smallest items a reader can check one at a time.
 
-- **A group is a feature or page as the user names it on screen**: a configuration page, an approval page, a log. Order the groups the way a user meets them: where things are configured, then where they are approved, then where they are recorded. Use the same names, in the same order, as the Affected features list.
+- **A group holds changes related enough to be worked on and checked together.** How many groups there are follows the size of the work, not the number of screens. A large or medium change gets a group per part or module it touches, named as the user knows it: the Customers page, the Approvals page, the Lark comment, the build step. Many small related changes go in one group even when they touch several screens, named by the part they share: the server rules, the screens, the Lark comment, the build step. A group never holds one small item on its own: fold it into the group it relates to most, and give a single item its own group only when it is a separate part nothing else relates to, such as an integration or a script. Order the groups the way the work flows: where a value is produced or configured, then where it is checked or approved, then where it is shown or recorded.
 - **Inside a group, each change is its own numbered item.** One item holds one change and only the pieces that cannot be judged without it: a rule with its boundary cases and its exact error message; a blocking rule with the message shown when blocked; a new field with its mandatory rule and how existing records are treated.
 - **Changes that can each be checked on their own are separate items**, even when one builds on the other. New fields and the save check that later uses them are two items. Two different checks on the same save are two items.
 - **If an item can be split without separating something from what it depends on, split it.** Number items continuously across groups, so the reader can refer to "change 5".
 - **Each item's title names the change in a few words**, with the mode or moment in brackets when it matters: Create and Edit, Batch Edit, on save.
 
-Why this shape: the reader works and tests one feature at a time, so a feature group is a self-contained review packet, and small items inside it keep each change checkable on its own. Grouping by change type (new fields, new rules, new approval) reads like release notes and loses where the change lives. Grouping by role suits sign-off meetings, so roles stay a one-line "Who is affected:" tag inside an item when they differ, never the structure.
+Why this shape: a group is one packet of related work a reader reviews, tests or implements together, and small items inside it keep each change checkable on its own. Six groups of one item each spread one small piece of work over six headings; one group of twenty items hides where a large change lands. Grouping by change type (new fields, new rules, new approval) reads like release notes and loses where the change lives. Grouping by role suits sign-off meetings, so roles stay a one-line "Who is affected:" tag inside an item when they differ, never the structure.
 
 ## Output template
 
@@ -62,17 +62,17 @@ Why this shape: the reader works and tests one feature at a time, so a feature g
 | <feature> | <today> | <after release> |
 | ... | ... | ... |
 
-**Changes, grouped by feature**
+**Changes, grouped by related part**
 
-**<Feature or page, as named on screen>**
+**<Group: the page or module for a large change, or the part several small changes share, as the user knows it>**
 
 1. **<The change in a few words>** (<mode or moment, such as Create and Edit, or on save>)
    <Everything the reader needs to judge this change and nothing from another item: fields by on-screen label, the rule in plain words, boundary behaviour, the exact message quoted, who is affected.>
 
-2. **<Next change in the same feature>**
+2. **<Next change in the same group>**
    <...>
 
-**<Next feature>**
+**<Next group>**
 
 3. **<...>**
    <...>
@@ -84,7 +84,7 @@ Why this shape: the reader works and tests one feature at a time, so a feature g
 <Empty sections, undefined permissions, contradictions, missing message text, phrased as what still needs deciding.>
 ```
 
-The Affected features list is the reader's scope check and the table of contents for the groups: one line per feature by its on-screen name, no detail, the same names in the same order as the group headings.
+The Affected features list is the reader's scope check: one line per feature by its on-screen name, no detail. A group may cover several listed features when their changes are small and related, and a large feature may span more than one group, so the list and the headings need not match one to one.
 
 A worked example is in `example.md` in this skill's folder. Read it the first time you use the skill, or whenever you are unsure how finely to split.
 

@@ -38,7 +38,7 @@ One row per criterion, derived from the spec's user stories, testing decisions a
 |---|---|---|---|---|
 | 1 | {{criterion}} | unit / integration / e2e / manual | {{what the test checks}} | `{{path}}` |
 | 2 | {{when a data path changes: behaviour at the expected scale, or when a dependency fails}} | integration | {{what the test checks}} | `{{path}}` |
-| 3 | {{per endpoint touched: bad input (wrong type, null, unknown id, operator or dotted key) with the status and message expected}} | integration | {{what the test checks}} | `{{path}}` |
+| 3 | {{per endpoint touched: bad input (wrong type, null, unknown id, operator or dotted key) with the status and message expected; per new guard, a check that refuses before an action runs: each input form the guarded action accepts that the guard could read differently (the id in another letter case, the id in the body as well as the URL, an operator object), refused with nothing written}} | integration | {{what the test checks}} | `{{path}}` |
 | 4 | {{per rule the spec enforces: how a caller would get around it, and the refusal expected}} | integration | {{what the test checks}} | `{{path}}` |
 
 ## Tasks

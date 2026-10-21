@@ -1,6 +1,13 @@
 # Changelog
 
-## 0.9.2 — unreleased
+## 0.9.3 — unreleased
+
+- Guards read input the way the action they protect does, found by benchmarking 0.9.x on the complex feature: in five of six runs a role with a pending request could still be deleted through an upper-case id or an id in the body, because the guard compared a raw string while the delete cast the id. `dev-plan`'s bad-input row now covers the input forms a new guard could read differently from its action, and the `dev-reviewer` checks each guard against the action's input handling.
+- `dev-plan` treats a refusal, lock or validation the spec doesn't state as beyond the spec and raises it as a question; the `dev-reviewer` flags one that no spec line or plan Decision supports. One complex run added a clone lock the spec scoped differently and failed the hidden test for it.
+- When the full test suite gives no result, `dev-verify` runs the affected test files together in as few commands as the runner accepts instead of one process per file; one re-verify spent 47 minutes starting 32 jest processes for a few seconds of tests.
+- `dev-spec-explain` groups changes by how related they are, so the group count follows the size of the work: a large change gets a group per part or module, many small related changes share one group such as the server rules or the screens, and a group never holds a single small item. The template heading is now "Changes, grouped by related part".
+
+## 0.9.2 — 2026-10-20
 
 - Fixed the `dev-reviewer` axes list: in 0.9.1 item 7 (Reliability) had merged onto the end of item 6 (Security), so the agent listed six axes while `dev-build` names seven.
 

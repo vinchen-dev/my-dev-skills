@@ -53,7 +53,7 @@ Summarize the approach and the task list in a few sentences, then wait for appro
 ## Rules
 
 - Don't write code. Describe changes; the implementation happens later.
-- Don't expand scope. Ideas beyond the spec go under "Out of scope and follow-ups".
+- Don't expand scope. Ideas beyond the spec go under "Out of scope and follow-ups". A refusal, lock, validation or error case the spec doesn't state is beyond the spec too: raise it as a question, recommending to leave it out unless the spec's wording requires it, and record the answer in Decisions instead of designing it into the Approach.
 - The spec wins. If the plan can't satisfy part of the spec, flag it rather than quietly changing the requirement.
 - Updating an existing plan: revise it in place and record what changed and why in the Decisions section, rather than rewriting from scratch. Keep task checkboxes that are already ticked.
 - The plan holds every change the build needs. `dev-build` implements; it does not find consumers. A consumer the build meets that the plan does not list stops the build as a plan gap.
