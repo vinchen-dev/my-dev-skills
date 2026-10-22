@@ -1,6 +1,15 @@
 # Changelog
 
-## 0.9.3 — unreleased
+## 0.9.4 — unreleased
+
+- `dev-plan` settles what the build would otherwise ask. Step 5 now lists the points builds have stopped on, from real runs: a value in every mode and state (Before for a batch whose records differ, an empty input, a changed-nothing request), every message and locale key with its text and language file, a save that mixes a gated and an ungated field, a status value outside its set, each existing caller's actual body against the new validation, the request that actually feeds a screen, and the protected paths the change must touch, listed under Decisions so approving the plan approves them. `dev-build` reads those sections before asking, edits a listed protected path without a second confirmation, and reports a question the plan left open as a plan gap. The build still asks whatever the plan does not answer.
+- `dev-build` finishes `DONE` only after a clean last cycle: every fix round has gone back through the verifier and then the reviewer, so `Reviewed:` equals `Fix rounds:` and neither raised a new must-fix; otherwise it reports `STOPPED` with the reason. One benchmark build reported DONE with its only fix round never re-checked.
+- `dev-build` writes every plan task itself and never hands tasks to another agent; two benchmark builds had delegated the client tasks to a general-purpose agent outside the tdd loop and the plan's bookkeeping.
+- A guard in front of a write resolves its id once, the way the action it protects does, and never refuses an input the action accepts. `dev-plan` states it in the Approach and `dev-build` passes it to `tdd`, so the guard is built right instead of fixed after review, which cost nearly every 0.9.3 benchmark run a fix round and one of them three.
+- A new reference by name must match a registration under that exact name. The `dev-reviewer` finds the registration and compares the spelling, since mocked tests never reach it, and `dev-plan` adds a row that exercises the reference against the real registration where the repo allows. One benchmark build shipped a populate path naming a model that was not registered under that name, and every role request then threw at runtime past every gate.
+- README: a recommended model setup, from the benchmark. Plan in a large model at high effort or above, build in a new session on a mid-size model at high effort, reviewer pinned to the large model and verifier to the mid-size one, with `model:` and `effort:` set in the two agents' frontmatter in your copy. The agents still inherit by default.
+
+## 0.9.3 — 2026-10-21
 
 - Guards read input the way the action they protect does, found by benchmarking 0.9.x on the complex feature: in five of six runs a role with a pending request could still be deleted through an upper-case id or an id in the body, because the guard compared a raw string while the delete cast the id. `dev-plan`'s bad-input row now covers the input forms a new guard could read differently from its action, and the `dev-reviewer` checks each guard against the action's input handling.
 - `dev-plan` treats a refusal, lock or validation the spec doesn't state as beyond the spec and raises it as a question; the `dev-reviewer` flags one that no spec line or plan Decision supports. One complex run added a clone lock the spec scoped differently and failed the hidden test for it.

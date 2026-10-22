@@ -14,7 +14,7 @@ Tickets: none <!-- dev-build writes the confirmed ticket → tasks and rows mapp
 
 ## Approach
 
-{{How the change fits the codebase: which layers or modules it touches, what patterns it follows, any new concepts it introduces. When one request writes more than once: the order of the writes and what happens when a later one fails. For each new or changed path: its failure cases and what each rolls back, with the number of the Test strategy row that carries the status and message, not the status and message themselves.}}
+{{How the change fits the codebase: which layers or modules it touches, what patterns it follows, any new concepts it introduces. When one request writes more than once: the order of the writes and what happens when a later one fails. For each new or changed path: its failure cases and what each rolls back, with the number of the Test strategy row that carries the status and message, not the status and message themselves. The messages, labels and locale keys the change adds or reuses, listed once with the exact text and the language file for each.}}
 
 ### Alternatives considered
 
@@ -64,6 +64,7 @@ Each task leaves the code working. Tick a task's checkbox when it is done; `dev-
 ## Decisions
 
 - {{date}}: {{decision}} — {{reason}}
+- Protected paths: {{`path` — why the change must touch it; approving the plan approves the edit, or `none`}}
 
 ## Out of scope and follow-ups
 

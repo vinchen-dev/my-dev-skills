@@ -144,6 +144,10 @@ your-project/
 
 Review `AGENTS.md` and `docs/standards.md` once. They are the only per-repo input to the workflow. Re-run `dev-standards` after major changes; it proposes updates, applies only what you approve, and never touches rules you wrote in `docs/standards.md`.
 
+## Recommended model setup
+
+The agents inherit the session's model by default. On a complex feature benchmark, the split that gave the same quality as running everything on the largest model at about half the cost and two thirds of the time was: plan in a large model at high effort or above, then start `dev-build` in a new session on a mid-size model at high effort, with the reviewer pinned to the large model and the verifier to the mid-size one. A mid-size build at medium effort was cheaper still but skipped re-checks and missed a consumer the plan had named, so high effort is the floor. To pin the agents, set `model:` and `effort:` in the frontmatter of `agents/dev-reviewer.md` and `agents/dev-verifier.md` in your copy; both keys pass the plugin validator.
+
 
 ## Repo layout
 
