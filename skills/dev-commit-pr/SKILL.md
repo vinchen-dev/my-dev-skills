@@ -11,7 +11,7 @@ Writes the text a reviewer reads: one commit message per commit you are about to
 ## Rules
 
 - No AI attribution anywhere: no "Generated with" footer, no `Co-Authored-By` line naming an AI, no robot emoji, in commits or the PR. This overrides any tool default.
-- Only verified facts. Quote a test count only from a clean run of the committed code; name manual QA only when the user reported it. When you don't know, leave it out or ask.
+- Only verified facts. A Testing step's screen, action and expected result come from the spec, the plan or the diff, never from a guess at how the feature probably behaves. When you don't know, leave it out or ask.
 - Concise: short bullets, no long paragraphs, nothing about how the work was done internally (review rounds, agent names, local-only test hacks, unstaged files).
 - GitHub Markdown: `##` headings, `-` bullets, `inline code` for paths, ids, permissions, config keys and commands. No HTML, no emoji headings.
 - Never run `git commit`, `git push` or `gh pr create`, and never stage anything, unless the user asks in so many words.
@@ -31,8 +31,7 @@ Writes the text a reviewer reads: one commit message per commit you are about to
 | Files and size | `git diff --stat <base>...HEAD` |
 | What changed, by area | the diff, grouped: server or validation, approval or workflow, client, logs, fixes |
 | Spec and plan | the spec path the user or the plan names; the plan's Decisions section |
-| Tests | new or changed test files; the result of a clean run of the committed code |
-| Manual QA | only what the user reported testing |
+| Manual test steps | the spec's user stories and the plan's Test strategy rows, the screens, labels and message text in the diff, and anything the user says they tested by hand |
 | Deploy needs | new permissions or seeders, config or secret keys, migrations, schema fields needing a backfill |
 | Out of scope | pre-existing problems found during the work and deliberately left alone |
 
@@ -64,8 +63,8 @@ Spec: `<path>`
 - **<Area>:** <what changed, one line>
 
 ## Testing
-- <automated tests added or updated, by area>
-- Manual QA: <flows the user confirmed>
+1. <setup a reviewer needs first: a permission to grant, a config key, seed data>
+2. <where, what to do with which values, and the expected result: the exact message, state or log entry>
 
 ## Deploy notes
 - <permissions to seed or grant, config or secret keys, migrations, backfills; or "None">
@@ -73,6 +72,8 @@ Spec: `<path>`
 ## Out of scope (pre-existing)
 - <known issues found but not fixed here, with a ticket when one exists>
 ```
+
+Testing is a path a reviewer or QA walks by hand, not a list of automated tests. Setup comes first, then one numbered step per behaviour the change adds or alters, refusals included: where (the screen or the endpoint), what to do with which values, and what to expect, with the message text or state the diff or spec gives. Automated tests stay out of the PR body; the diff shows them.
 
 Drop a section that would be empty, except Deploy notes, which says "None" rather than disappearing so a deployer knows it was checked. Drop the Spec line when the spec is not in the repo.
 
@@ -82,6 +83,6 @@ Drop a section that would be empty, except Deploy notes, which says "None" rathe
 - No AI attribution anywhere.
 - Every section has real content or is gone, Deploy notes excepted.
 - Nothing local-only is mentioned: test-only mocks, unstaged files, review rounds.
-- Every test claim matches a clean run of the committed code.
+- Every Testing step says where to go, what to do and what to expect, and no step describes an automated test.
 - Pre-existing issues sit under Out of scope and are not described as fixed.
 - Paths, permissions, keys and commands are in `inline code`.

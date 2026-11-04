@@ -1,6 +1,10 @@
 # Changelog
 
-## 0.9.4 — unreleased
+## 0.9.5 — unreleased
+
+- `dev-commit-pr`: the PR body's Testing section is now manual test steps for a reviewer, setup first and one numbered step per behaviour with the message or state to expect, taken from the spec, the plan and the diff. Automated tests no longer appear there; the diff shows them.
+
+## 0.9.4 — 2026-10-22
 
 - `dev-plan` settles what the build would otherwise ask. Step 5 now lists the points builds have stopped on, from real runs: a value in every mode and state (Before for a batch whose records differ, an empty input, a changed-nothing request), every message and locale key with its text and language file, a save that mixes a gated and an ungated field, a status value outside its set, each existing caller's actual body against the new validation, the request that actually feeds a screen, and the protected paths the change must touch, listed under Decisions so approving the plan approves them. `dev-build` reads those sections before asking, edits a listed protected path without a second confirmation, and reports a question the plan left open as a plan gap. The build still asks whatever the plan does not answer.
 - `dev-build` finishes `DONE` only after a clean last cycle: every fix round has gone back through the verifier and then the reviewer, so `Reviewed:` equals `Fix rounds:` and neither raised a new must-fix; otherwise it reports `STOPPED` with the reason. One benchmark build reported DONE with its only fix round never re-checked.

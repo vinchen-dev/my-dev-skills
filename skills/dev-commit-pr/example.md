@@ -42,9 +42,12 @@ Spec: `docs/features/transfer-range/spec.md`
 - **Logs:** submit and approve entries with Before and After amounts.
 
 ## Testing
-- Server tests for validation, batch edit, proposals, approval and logs.
-- Client tests for the form checks.
-- Manual QA: Create, Update, Batch Edit, Approve page, logs.
+1. Grant `ApprovalPage/EditTransferRange` to your role.
+2. Customer > Update: set the range to 100 to 500 and save. Expect a pending **Edit Transfer Range** item on the Approve page and the customer's range unchanged until it is approved.
+3. Customer > Update on the same customer: change the limit. Expect "A transfer change is already pending approval" and no new item.
+4. Approve page: filter by **Edit Transfer Range**, open the item and approve it. Expect the range applied and a log entry with Before and After amounts.
+5. Customer > Update: with the range 100 to 500, set the limit to 900 and save. Expect "Transfer limit must be within the allowed range" and no change.
+6. Customer > Batch Edit: select two customers, set a range and save. Expect one pending item covering both.
 
 ## Deploy notes
 - Seed `ApprovalPage/EditTransferRange` per environment and grant it to approver roles.
@@ -54,4 +57,4 @@ Spec: `docs/features/transfer-range/spec.md`
 - `PATCH /customer/:id` accepts update operators in the body (separate ticket).
 ```
 
-Why it reads this way: each Changes bullet is one area a reviewer would open; Testing names areas, not counts, because no clean-run count was available; Deploy notes names the permission literally so a deployer can copy it; the out-of-scope bug predates the feature and is listed, not fixed.
+Why it reads this way: each Changes bullet is one area a reviewer would open; Testing is a path a reviewer can walk in a few minutes, setup first and one step per behaviour with the message or state to expect, and says nothing about the automated tests because the diff shows them; Deploy notes names the permission literally so a deployer can copy it; the out-of-scope bug predates the feature and is listed, not fixed.
