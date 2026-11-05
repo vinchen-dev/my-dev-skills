@@ -1,7 +1,8 @@
 # Changelog
 
-## 0.9.5 — unreleased
+## 0.10.0 — unreleased
 
+- New `dev-reply` skill: drafts the message to send to someone outside the conversation (a DBA, QA, a product owner, another team) from facts the session established. Short form by default, answering their last point with the deciding figure and one ask; proof form with a side-by-side table and the exact query when evidence was asked for. Names the term the recipient can search for without defining it, and adds no commitment the user did not make. Triggers on "give me a reply", "follow up", "what do I tell them".
 - `dev-commit-pr`: the PR body's Testing section is now manual test steps for a reviewer, setup first and one numbered step per behaviour with the message or state to expect, taken from the spec, the plan and the diff. Automated tests no longer appear there; the diff shows them.
 
 ## 0.9.4 — 2026-10-22

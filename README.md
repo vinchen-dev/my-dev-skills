@@ -28,6 +28,7 @@ The first cycle checks everything: the verifier proves every row of the plan's t
 | `dev-commit-pr` | Skill (this plugin) | Writes commit messages and the PR title and body in the repo's format with the ticket id, from verified facts only. You invoke it; it never commits or pushes | No |
 | `dev-ticket-summary` | Skill (this plugin) | Condenses a finished investigation into a ticket-ready summary to paste. You invoke it; it is never triggered automatically | No |
 | `dev-spec-explain` | Skill (this plugin) | Explains a feature spec in plain language for product, QA, operations and support, lists the affected features, then groups the changes by feature with each change as its own small reviewable item, plus what does not change and gaps in the spec. Never reports code impact | No |
+| `dev-reply` | Skill (this plugin) | Drafts the message to send to a DBA, QA, a product owner or another team from facts the session established, answering their last point with the deciding figure and one ask; short form by default, proof form with a comparison table and the exact query when evidence was asked for | No |
 | `dev-explorer` | Agent (this plugin) | Read-only codebase scan for `dev-plan` and `dev-standards`, tracing every consumer of what a change modifies; optionally uses a Graphify knowledge graph and an Obsidian project vault, see below | No |
 | `dev-verifier` | Agent (this plugin) | Runs `dev-verify` in an isolated context | Tests only |
 | `dev-reviewer` | Agent (this plugin) | Dedicated second look after `code-review`: tool output, performance and resource use, security, reliability, structure, tests; after its first pass, only the fix rounds since then and their callers | No |
@@ -146,13 +147,23 @@ Review `AGENTS.md` and `docs/standards.md` once. They are the only per-repo inpu
 
 ## Recommended model setup
 
-The agents inherit the session's model by default. On a complex feature benchmark, the split that gave the same quality as running everything on the largest model at about half the cost and two thirds of the time was: plan in a large model at high effort or above, then start `dev-build` in a new session on a mid-size model at high effort, with the reviewer pinned to the large model and the verifier to the mid-size one. A mid-size build at medium effort was cheaper still but skipped re-checks and missed a consumer the plan had named, so high effort is the floor. To pin the agents, set `model:` and `effort:` in the frontmatter of `agents/dev-reviewer.md` and `agents/dev-verifier.md` in your copy; both keys pass the plugin validator.
+The agents inherit the session's model by default. On a complex feature benchmark run on 2026-10-21 and 2026-10-22 (plugin 0.9.3 and 0.9.4), this split gave the same quality as running everything on Opus at about half the cost and two thirds of the time:
+
+| Step | Model | Effort | Mean cost per run on 0.9.4 (2026-10-22), complex / easy / average |
+|---|---|---|---|
+| `dev-plan` (session) | Opus 5.5 | xhigh | |
+| `dev-explorer` | Haiku | default | |
+| `dev-build`, including fix rounds (session) | Sonnet 5.5 | high | $8.19 / $1.59 / $3.15 |
+| `dev-verifier` | Sonnet 5.5 | high | $1.62 (two passes) / $0.32 / $0.52 |
+| `dev-reviewer` | Opus 5.5 | high | |
+
+Plan in Opus, then start `dev-build` in a new session on Sonnet; the plan and build models are whatever the session runs. On 0.9.4 every run finished `DONE`: four complex, two easy, two average. Two things not to lower: the plan's effort, because Opus at high missed a consumer the plan had to name in two of four runs where xhigh never did, and the build's effort, because Sonnet at medium skipped the re-check after a fix round. To pin the two agents, set `model:` and `effort:` in the frontmatter of `agents/dev-reviewer.md` and `agents/dev-verifier.md` in your copy; both keys pass the plugin validator.
 
 
 ## Repo layout
 
 ```
-skills/            dev-plan, dev-verify, dev-build, dev-ship, dev-ticket-summary, dev-spec-explain (with a worked example), dev-standards (with template, monorepos reference and stack packs)
+skills/            dev-plan, dev-verify, dev-build, dev-ship, dev-ticket-summary, dev-spec-explain (with a worked example), dev-reply (with a worked example), dev-standards (with template, monorepos reference and stack packs)
 agents/            dev-explorer, dev-verifier, dev-reviewer
 hooks/             hooks.json + format-file.js (post-edit formatter) + guard-commands.js (blocks destructive commands)
 .claude-plugin/    Claude Code manifest and marketplace (generated)
