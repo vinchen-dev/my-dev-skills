@@ -45,3 +45,19 @@ The table carries the proof, so the prose only explains the mechanism once and e
 ## Corrections that shaped these forms
 
 From the real thread, in the order the user gave them: "be concise", "make it natural and concise", "the tone should be like an inquiry but suggesting it", "just make it a statement", "I want to add PROJECTION_COVERED, the idea is they can search it in case they're not familiar with it". Each one is a rule above; a new draft that needs none of them is the target.
+
+## Explanation form
+
+A different thread. What the session had established: a deposit-monitoring tool showed accounting "Account locked out. Please request for your account to be unlocked" and stopped itself, four times in one afternoon. The bank never locked the account. In the test environment the tool's own browser was too slow to start, and the tool's error check read the browser's start-up error as a lockout because that error text contained the letters "lock", inside a browser setting named popup-blocking. Manual logins worked each time, and every deposit that arrived was posted. The agreed fix: a failure in the tool's own browser is never reported as a locked account, while a real lock message from the bank still shows as before.
+
+The user asked for a concise "Root cause:" and "suggested fix:" to give to the accounting team, then added "note that is for non technical person".
+
+> **Root cause:** The "Account locked out" message did not come from the bank. It came from our auto-deposit tool itself. In the test environment the tool's background browser was too slow to start, and the tool's error check wrongly read that start-up failure as a locked account, because the technical error text happened to contain the letters "lock" (from a browser setting called "popup-blocking"). The bank was never contacted during those attempts and the account was never locked, which is why our manual logins worked every time. The tool then paused itself until we logged it back in. No deposit was missed.
+>
+> **Suggested fix:** Change the tool so that a technical failure in its own browser can never be reported as a locked account. A real lock message from the bank will still show as before. Until the change is deployed, treat this message as a false alarm: no unlock request to the bank is needed, just let us know and we will log the tool back in.
+
+Why it reads this way: the root cause opens with whose side the message came from, because the reader's first question is whether the bank locked them. The one sentence of mechanism makes "how could that happen" concrete with a word they can picture instead of an error line. It ends on what was not affected, since a missed deposit is what accounting would worry about. The fix says what they will see, and the ask is its last sentence.
+
+Left out, though the session had them: the error text, the browser's three-minute start-up limit, the four times of day, the server and file names, and the infrastructure follow-up for the platform team. None of them changes what accounting does.
+
+The correction that shaped it: the first suggested fix said the "locked" message would only ever come from the bank's page. The user then narrowed the agreed fix to failures in the tool's own browser, so the message had to promise only that; the reader will hold the team to whatever the fix line says.

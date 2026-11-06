@@ -1,6 +1,10 @@
 # Changelog
 
-## 0.10.0 — unreleased
+## 0.10.1 — unreleased
+
+- `dev-reply`: new explanation form for a non-technical team such as accounting, operations or support. Two labelled parts, a plain-language root cause that says whose side the problem came from and what was not affected, and a suggested fix described by what the reader will see, ending with the one thing to do until it ships. The reply carries no code, file names, error text or internal environment names. The skill now also triggers when the user asks to explain what happened to such a team, and `example.md` has a worked example.
+
+## 0.10.0 — 2026-11-05
 
 - New `dev-reply` skill: drafts the message to send to someone outside the conversation (a DBA, QA, a product owner, another team) from facts the session established. Short form by default, answering their last point with the deciding figure and one ask; proof form with a side-by-side table and the exact query when evidence was asked for. Names the term the recipient can search for without defining it, and adds no commitment the user did not make. Triggers on "give me a reply", "follow up", "what do I tell them".
 - `dev-commit-pr`: the PR body's Testing section is now manual test steps for a reviewer, setup first and one numbered step per behaviour with the message or state to expect, taken from the spec, the plan and the diff. Automated tests no longer appear there; the diff shows them.
