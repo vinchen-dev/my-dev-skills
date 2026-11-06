@@ -1,6 +1,6 @@
 # Stack packs
 
-Stack packs are optional. `dev-standards` works without them by learning conventions from the repo and using the universal defaults in `template.md`, one folder up. Add a pack only when the same stack-specific rules keep getting missed across repos.
+Stack packs are optional. `dev-init` works without them by learning conventions from the repo and using the universal defaults in `template.md`, one folder up. Add a pack only when the same stack-specific rules keep getting missed across repos.
 
 ## Format
 

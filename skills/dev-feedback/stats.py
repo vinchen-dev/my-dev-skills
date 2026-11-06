@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """Token and time stats for one span of a Claude Code session, from its transcript.
 
-Used by dev-mode to put a Cost section in every feedback report, so a run that burns
-tokens or stalls can be seen and explained.
+Used by dev-feedback to list the plugin runs in a conversation and to put a Cost section in
+every entry, so a run that burns tokens or stalls can be seen and explained.
 
-  python3 stats.py --skill dev-build                 # from the last /dev-build (or Agent for it) to the next /dev-mode
+  python3 stats.py --runs                            # every plugin skill and agent run in the session, in order
+  python3 stats.py --skill dev-build                 # from the last /dev-build (or Agent for it) to the next plugin skill run
   python3 stats.py --skill dev-build --nth 1         # from the first /dev-build in the session instead of the last
   python3 stats.py --since 'regex' --until 'regex'   # any span, matched against the raw transcript lines
   python3 stats.py                                   # the whole session so far
@@ -22,6 +23,9 @@ import re
 import sys
 
 ACTIVE_GAP_S = 120  # a gap longer than this between two calls is taken as waiting on the user
+# A span ends where the next plugin skill starts, typed or called through Skill. Agent calls are not
+# boundaries, so the dev-verifier and dev-reviewer runs inside dev-build stay in its span.
+NEXT_RUN = r'<command-name>/(?:[\w-]+:)?dev-[\w-]+|"skill":\s*"(?:[\w-]+:)?dev-[\w-]+"'
 # "New input" is input_tokens plus cache_creation_input_tokens: with prompt caching on, almost all
 # fresh context is billed as a cache write, so input_tokens alone would hide it.
 
@@ -49,15 +53,74 @@ def local(ts):
     return ts.astimezone().strftime("%d %b %H:%M")
 
 
+def invocation(line):
+    """(timestamp, how, component, detail) when the line starts a plugin skill or agent run, else None."""
+    try:
+        r = json.loads(line)
+    except Exception:
+        return None
+    m = r.get("message") or {}
+    ts = parse_ts(r["timestamp"]) if r.get("timestamp") else None
+    if r.get("type") == "assistant":
+        for c in m.get("content") or []:
+            if not isinstance(c, dict) or c.get("type") != "tool_use":
+                continue
+            inp = c.get("input") or {}
+            if c.get("name") == "Skill":
+                name, how, detail = inp.get("skill", ""), "skill", inp.get("args", "")
+            elif c.get("name") in ("Agent", "Task"):
+                name, how, detail = inp.get("subagent_type", ""), "agent", inp.get("description", "")
+            else:
+                continue
+            name = name.split(":")[-1]
+            if name.startswith("dev-"):
+                return ts, how, name, detail
+    elif r.get("type") == "user":
+        content = m.get("content")
+        text = content if isinstance(content, str) else " ".join(
+            c.get("text", "") for c in (content or []) if isinstance(c, dict) and c.get("type") == "text")
+        hit = re.search(r"<command-name>/(?:[\w-]+:)?(dev-[\w-]+)</command-name>", text)
+        if hit:
+            cargs = re.search(r"<command-args>(.*?)</command-args>", text, re.S)
+            return ts, "typed", hit.group(1), cargs.group(1) if cargs else ""
+    return None
+
+
+def print_runs(path, lines):
+    # Nth counts runs of the same component in file order, which is the order --nth uses.
+    print("## Runs")
+    print()
+    print(f"Transcript `{path}`. Nth is the run's position among runs of the same component; "
+          "pass it as `--skill <component> --nth <n>` for that run's cost.")
+    print()
+    counts, k = {}, 0
+    for line in lines:
+        inv = invocation(line)
+        if not inv:
+            continue
+        ts, how, name, detail = inv
+        counts[name] = counts.get(name, 0) + 1
+        k += 1
+        if k == 1:
+            print("| # | Time | Component | Nth | How | Detail |")
+            print("|---|---|---|---|---|---|")
+        detail = " ".join(str(detail).split()).replace("|", "/")
+        detail = detail[:60] + ("..." if len(detail) > 60 else "")
+        print(f"| {k} | {local(ts) if ts else '?'} | {name} | {counts[name]} | {how} | {detail} |")
+    if not k:
+        print("No plugin skill or agent runs in this transcript.")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--transcript")
+    ap.add_argument("--runs", action="store_true", help="list every plugin skill and agent run in the session, then stop")
     ap.add_argument("--skill", help="component name; builds the --since regex for its invocation")
     ap.add_argument("--since", help="regex; the span starts at the LAST line matching it")
     ap.add_argument("--nth", type=int, default=-1,
                     help="which --since match starts the span: 1 is the first in the session, -1 (default) the last")
-    ap.add_argument("--until", help="regex; the span ends before the first later line matching it",
-                    default=r'<command-name>/dev-mode|"skill":\s*"dev-mode"')
+    ap.add_argument("--until", help="regex; the span ends before the first later line matching it; "
+                    "with --since or --skill it defaults to the next plugin skill run")
     args = ap.parse_args()
 
     path = pathlib.Path(args.transcript) if args.transcript else find_transcript()
@@ -66,10 +129,14 @@ def main():
         n = re.escape(args.skill)
         # A skill can be invoked under its plugin namespace, /my-dev-skills:dev-build, so allow a prefix.
         since = rf'<command-name>/(?:[\w-]+:)?{n}\b|"skill":\s*"(?:[\w-]+:)?{n}"|"subagent_type":\s*"[^"]*{n}"'
+    until = args.until or (NEXT_RUN if since else None)
     since_re = re.compile(since) if since else None
-    until_re = re.compile(args.until) if args.until else None
+    until_re = re.compile(until) if until else None
 
     lines = path.read_text(errors="replace").splitlines()
+    if args.runs:
+        print_runs(path, lines)
+        return
 
     # A boundary is an invocation, never an echo: the regex is matched only against tool-use
     # blocks (Skill name, Agent description and subagent_type, a Bash command) and typed

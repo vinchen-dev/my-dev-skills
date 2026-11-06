@@ -1,6 +1,11 @@
 # Changelog
 
-## 0.10.1 — unreleased
+## 0.11.0 — unreleased
+
+- `dev-standards` is renamed `dev-init`. Type `/dev-init` where you typed `/dev-standards`; it does the same job and writes the same `AGENTS.md`, `CLAUDE.md` and `docs/standards.md`. Files it already wrote need no change: a re-run finds them and goes into update mode as before, and the generated-by comment at the top of `AGENTS.md` now names `dev-init`.
+- The installer removes its own links and marked copies of skills this version no longer ships, so updating a Codex install no longer leaves a dangling `dev-standards` link or a stale copy behind. Entries it did not create are left alone. `uninstall` removes them too.
+
+## 0.10.1 — 2026-11-06
 
 - `dev-reply`: new explanation form for a non-technical team such as accounting, operations or support. Two labelled parts, a plain-language root cause that says whose side the problem came from and what was not affected, and a suggested fix described by what the reader will see, ending with the one thing to do until it ships. The reply carries no code, file names, error text or internal environment names. The skill now also triggers when the user asks to explain what happened to such a team, and `example.md` has a worked example.
 

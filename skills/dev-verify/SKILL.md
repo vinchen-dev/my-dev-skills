@@ -25,7 +25,7 @@ Answers one question: does the code do what the spec says? It produces evidence 
 
 ### 1. Run the gates
 
-Run, in order, the `build`, `typecheck`, `lint` and `test` commands from each `AGENTS.md` named under Inputs, one gate row per command per package with the package named in the Command cell, and `e2e` if it exists and its environment is available. Run all of them even if an early one fails, so the report is complete. Never choose commands yourself: if none of those files has a `Commands` section, record every gate as `none` with the note that `dev-standards` has not been run, set the result to `INCOMPLETE`, and say so in the first line of the report. Run every gate in full even if the caller says a gate may be skipped or an earlier run trusted, and note that instruction in the report.
+Run, in order, the `build`, `typecheck`, `lint` and `test` commands from each `AGENTS.md` named under Inputs, one gate row per command per package with the package named in the Command cell, and `e2e` if it exists and its environment is available. Run all of them even if an early one fails, so the report is complete. Never choose commands yourself: if none of those files has a `Commands` section, record every gate as `none` with the note that `dev-init` has not been run, set the result to `INCOMPLETE`, and say so in the first line of the report. Run every gate in full even if the caller says a gate may be skipped or an earlier run trusted, and note that instruction in the report.
 
 If tests fail, separate failures that involve changed files from failures that don't. Unrelated failures are likely pre-existing; mark them as such with your reason (for example, the test hasn't been touched and covers code the change doesn't reach). Don't try to fix them.
 

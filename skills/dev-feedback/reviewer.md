@@ -1,4 +1,4 @@
-# dev-mode reviewer brief
+# dev-feedback reviewer brief
 
 Fill every {{placeholder}} before starting the agent.
 
@@ -12,21 +12,23 @@ You are reviewing one real run of a skill or agent from the `my-dev-skills` plug
 - Inputs the run had: {{spec, plan, request, or "none"}}
 - Outputs to review: {{paths on disk; chat-only output is pasted at the end under "Pasted output"}}
 - How it was run: {{tool; branch; per-repo setup present or not; scope}}
-- From the user: {{their verdict, or "nothing"}}
+- What the user said around the run: {{their request, answers to the skill's questions, corrections, re-prompts and verdict, quoted in order; or "nothing"}}
+- What the next run did with the output: {{for example what the build did with the plan; or "nothing ran after it"}}
 - Cost of the run, from stats.py: {{paste the table, subagent runs, longest gaps and heaviest calls}}
 
 ## Method
 
 1. Read the contract files in full. Write down the rules the component must follow and every element of the template it must fill.
 2. Read the output in full. For each rule and template element, check it. Record where the output honoured it, where it deviated, and where the contract was silent and the output had to improvise.
-3. For each deviation or improvisation ask one question: would this recur on another repo with the same skill text? If yes, it is a candidate finding. If it comes from how this run was set up, it is a process note.
-4. For each candidate with a fix, write the exact replacement text and the file and line it goes to. Check the fix against the repo's `AGENTS.md` section "How the pieces fit" and against every other skill or agent that reads the same artefact, and name the other files that would need the same change.
-5. Also look for the opposite failure: a rule that caused waste. Take each heavy call and long gap in the cost figures and ask what caused it. A cause that is a rule in the skill, such as rendering every page, re-running a suite for a comment change, or re-reading a file it already had, is a candidate, usually LOW, with the figure as evidence. A cause that is the user deciding, a tool, or the environment is not.
+3. Read what the user said around the run. A correction, a re-prompt or a manual fix after the run means the output fell short: find the rule that should have prevented it, or say the skill does not specify one. Do the same for anything the next run had to work around.
+4. For each deviation or improvisation ask one question: would this recur on another repo with the same skill text? If yes, it is a candidate finding. If it comes from how this run was set up, it is a process note.
+5. For each candidate with a fix, write the exact replacement text and the file and line it goes to. Check the fix against the repo's `AGENTS.md` section "How the pieces fit" and against every other skill or agent that reads the same artefact, and name the other files that would need the same change.
+6. Also look for the opposite failure: a rule that caused waste. Take each heavy call and long gap in the cost figures and ask what caused it. A cause that is a rule in the skill, such as rendering every page, re-running a suite for a comment change, or re-reading a file it already had, is a candidate, usually LOW, with the figure as evidence. A cause that is the user deciding, a tool, or the environment is not.
 
 ## Rules
 
-- Every finding quotes `file:line` on both sides, contract and output. No line, no finding.
-- Severity on the dev-mode scale: CRITICAL, HIGH, MEDIUM, LOW. One sentence on why.
+- Every finding quotes `file:line` on both sides: the contract, and the output or the user's words. No line, no finding.
+- Severity on the dev-feedback scale: CRITICAL, HIGH, MEDIUM, LOW. One sentence on why.
 - No style rewrites, no suggestions for taste, no padding. A short list with evidence beats a long one.
 - Where the contract is silent, say "the skill does not specify" and state what it should specify.
 - List what you checked and found correct, so the findings list is credible by what it leaves out.
@@ -40,7 +42,7 @@ Findings, ranked by severity, each titled with the component or agent it is abou
 - Reason: why it matters, in one or two sentences, for the reader of the output or for the next skill in the chain.
 - How it was found: the concrete observation in this run, in order: what the contract says, what the output did, what you compared to see the difference.
 - Where it recurs: a concrete scenario on another repo or spec that triggers the same deviation, with the input and the wrong output described so a reader can picture it.
-- Evidence: contract `file:line` and output `file:line`, with the quoted text.
+- Evidence: contract `file:line` and output `file:line` or the user's words, with the quoted text.
 - Change: file, line and exact replacement text.
 - Also touch: other files that need the same change, or none.
 - Confirm by: what the next run's output must show, or the check to run, so the fix can be verified later without this report.

@@ -1,11 +1,11 @@
 # my-dev-skills
 
-Plan, verify and build skills that extend [Matt Pocock's skills](https://github.com/mattpocock/skills) with a technical plan step, spec verification, and an implement → verify → review loop. Stack-agnostic: each repo's commands and coding standards are generated once by `dev-standards` and read by every other skill.
+Plan, verify and build skills that extend [Matt Pocock's skills](https://github.com/mattpocock/skills) with a technical plan step, spec verification, and an implement → verify → review loop. Stack-agnostic: each repo's commands and coding standards are generated once by `dev-init` and read by every other skill.
 
 ## The workflow
 
 ```
-Once per repo:   dev-standards   (setup-matt-pocock-skills only for an issue tracker)
+Once per repo:   dev-init   (setup-matt-pocock-skills only for an issue tracker)
 
 Per feature:     grill-me → to-spec → dev-plan → to-tickets (optional) → dev-build → dev-ship
                                                                              │
@@ -14,13 +14,13 @@ Per feature:     grill-me → to-spec → dev-plan → to-tickets (optional) →
 Bugs:            diagnosing-bugs
 ```
 
-With your permission, asked once at the start of a build, `dev-build` commits work in progress on a feature branch before each review pass, because Matt's `code-review` only sees committed work; `dev-ship` squashes those commits into one. If you decline, `dev-build` skips `code-review` and the dev-reviewer covers all axes. No commit or PR carries AI attribution. `to-tickets` is optional and feeds your tracker; `dev-build` works the plan's tasks, all of them or the subset a ticket, task numbers or a group name scopes, matching a ticket to the plan's tasks and rows with your confirmation, and a ticket's checklist is never what it builds or verifies against. It stops at preflight until `dev-standards` has run.
+With your permission, asked once at the start of a build, `dev-build` commits work in progress on a feature branch before each review pass, because Matt's `code-review` only sees committed work; `dev-ship` squashes those commits into one. If you decline, `dev-build` skips `code-review` and the dev-reviewer covers all axes. No commit or PR carries AI attribution. `to-tickets` is optional and feeds your tracker; `dev-build` works the plan's tasks, all of them or the subset a ticket, task numbers or a group name scopes, matching a ticket to the plan's tasks and rows with your confirmation, and a ticket's checklist is never what it builds or verifies against. It stops at preflight until `dev-init` has run.
 
 The first cycle checks everything: the verifier proves every row of the plan's test strategy while the reviewer (Matt's `code-review` plus the dev-reviewer) reads the whole change, and every finding from both is fixed in one round, test-first. Each later cycle rechecks only what that fix changed and the code that calls it, carries every other result forward, and still runs the build, lint and test gates in full. The plan records which rounds have been verified and reviewed, so the agents narrow from the plan rather than from the brief, and the loop stops after three fix rounds or when the same failure keeps coming back. Because the plan's test strategy already holds bad-input and abuse rows for every endpoint and rule the change touches, those cases are tested when the code is first written instead of surfacing cycle by cycle.
 
 | Name | Type | Role | Edits code? |
 |---|---|---|---|
-| `dev-standards` | Skill (this plugin) | Generates `AGENTS.md`, `CLAUDE.md` and `docs/standards.md` from repo evidence | Rules and docs only |
+| `dev-init` | Skill (this plugin) | Generates `AGENTS.md`, `CLAUDE.md` and `docs/standards.md` from repo evidence | Rules and docs only |
 | `dev-plan` | Skill (this plugin) | Technical design with every consumer of what changes and its fix, failure handling per path, and a test strategy that derives acceptance criteria from the spec, adds bad-input and abuse rows, and maps each to a test | No |
 | `dev-verify` | Skill (this plugin) | Runs the repo's gates and proves each criterion; on a re-verify, only the rows a fix touched or that depend on it; writes `verify-report.md` | Tests only |
 | `dev-build` | Skill (this plugin) | Orchestrates implement → verify and review together, then narrowed rechecks of each fix and its callers; applies fixes test-first; reports | Yes; work-in-progress commits only with your permission |
@@ -29,7 +29,7 @@ The first cycle checks everything: the verifier proves every row of the plan's t
 | `dev-ticket-summary` | Skill (this plugin) | Condenses a finished investigation into a ticket-ready summary to paste. You invoke it; it is never triggered automatically | No |
 | `dev-spec-explain` | Skill (this plugin) | Explains a feature spec in plain language for product, QA, operations and support, lists the affected features, then groups the changes by feature with each change as its own small reviewable item, plus what does not change and gaps in the spec. Never reports code impact | No |
 | `dev-reply` | Skill (this plugin) | Drafts the message to send to a DBA, QA, a product owner or another team from facts the session established, answering their last point with the deciding figure and one ask; short form by default, proof form with a comparison table and the exact query when evidence was asked for; explanation form with a plain-language root cause and suggested fix for a non-technical team | No |
-| `dev-explorer` | Agent (this plugin) | Read-only codebase scan for `dev-plan` and `dev-standards`, tracing every consumer of what a change modifies; optionally uses a Graphify knowledge graph and an Obsidian project vault, see below | No |
+| `dev-explorer` | Agent (this plugin) | Read-only codebase scan for `dev-plan` and `dev-init`, tracing every consumer of what a change modifies; optionally uses a Graphify knowledge graph and an Obsidian project vault, see below | No |
 | `dev-verifier` | Agent (this plugin) | Runs `dev-verify` in an isolated context | Tests only |
 | `dev-reviewer` | Agent (this plugin) | Dedicated second look after `code-review`: tool output, performance and resource use, security, reliability, structure, tests; after its first pass, only the fix rounds since then and their callers | No |
 | Hooks | Hooks (this plugin) | Format each edited file with the repo's `format-one` command; block destructive git, database and publish commands | Enforced |
@@ -132,8 +132,8 @@ Start a new session in each tool afterwards for the change to take effect.
 
 ## Per-repo setup
 
-1. Optional, only when your specs live on a GitHub or GitLab issue tracker: run Matt's `setup-matt-pocock-skills` and answer `AGENTS.md` when it asks which file to create. It writes `docs/agents/issue-tracker.md` and `docs/agents/domain.md` (plus `docs/agents/triage-labels.md` when his `triage` skill is installed) and adds an `## Agent skills` block. Run it before `dev-standards` on a fresh repo, because it edits `CLAUDE.md` whenever one exists and Codex only reads `AGENTS.md`. With local specs, skip it.
-2. Run `dev-standards`. It scans the codebase, verifies the real commands, asks a handful of questions, and writes or updates:
+1. Optional, only when your specs live on a GitHub or GitLab issue tracker: run Matt's `setup-matt-pocock-skills` and answer `AGENTS.md` when it asks which file to create. It writes `docs/agents/issue-tracker.md` and `docs/agents/domain.md` (plus `docs/agents/triage-labels.md` when his `triage` skill is installed) and adds an `## Agent skills` block. Run it before `dev-init` on a fresh repo, because it edits `CLAUDE.md` whenever one exists and Codex only reads `AGENTS.md`. With local specs, skip it.
+2. Run `dev-init`. It scans the codebase, verifies the real commands, asks a handful of questions, and writes or updates:
 
 ```
 your-project/
@@ -143,7 +143,7 @@ your-project/
 └── .scratch/<feature>/    # per feature: spec.md (from to-spec, or any path you name), plan.md, verify-report.md, build-report.md
 ```
 
-Review `AGENTS.md` and `docs/standards.md` once. They are the only per-repo input to the workflow. Re-run `dev-standards` after major changes; it proposes updates, applies only what you approve, and never touches rules you wrote in `docs/standards.md`.
+Review `AGENTS.md` and `docs/standards.md` once. They are the only per-repo input to the workflow. Re-run `dev-init` after major changes; it proposes updates, applies only what you approve, and never touches rules you wrote in `docs/standards.md`.
 
 ## Recommended model setup
 
@@ -163,7 +163,7 @@ Plan in Opus, then start `dev-build` in a new session on Sonnet; the plan and bu
 ## Repo layout
 
 ```
-skills/            dev-plan, dev-verify, dev-build, dev-ship, dev-ticket-summary, dev-spec-explain (with a worked example), dev-reply (with a worked example), dev-standards (with template, monorepos reference and stack packs)
+skills/            dev-plan, dev-verify, dev-build, dev-ship, dev-ticket-summary, dev-spec-explain (with a worked example), dev-reply (with a worked example), dev-init (with template, monorepos reference and stack packs)
 agents/            dev-explorer, dev-verifier, dev-reviewer
 hooks/             hooks.json + format-file.js (post-edit formatter) + guard-commands.js (blocks destructive commands)
 .claude-plugin/    Claude Code manifest and marketplace (generated)
@@ -180,7 +180,7 @@ scripts/           build-manifests.js — regenerates the manifests from package
 
 ## Developing and testing locally
 
-Add the repo folder as a local marketplace in Claude Code and install from it, so you test the same way users install. Test one skill at a time on a real repo: `dev-standards` first, since everything else depends on its output, then `dev-plan`, then `dev-verify`, then `dev-build`.
+Add the repo folder as a local marketplace in Claude Code and install from it, so you test the same way users install. Test one skill at a time on a real repo: `dev-init` first, since everything else depends on its output, then `dev-plan`, then `dev-verify`, then `dev-build`.
 
 ## Verified
 

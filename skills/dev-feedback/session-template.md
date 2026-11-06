@@ -1,8 +1,8 @@
-# dev-mode session: {{name}}, {{date}}
+# dev-feedback: {{name}}, {{date}}
 
 Repo: {{project repo and branch}}
 Plugin version: {{from .claude-plugin/plugin.json}}
-Started: {{time}}
+Conversation: {{time of the first run}} to {{time of the last}}, transcript {{path, or "not available"}}
 
 Every finding below must stand alone. An agent that reads only this file, with the my-dev-skills repo in front of it, must be able to judge whether the finding still holds, decide whether to apply it, apply it, and confirm the fix. Copy this whole file to that agent.
 
@@ -13,6 +13,7 @@ Every finding below must stand alone. An agent that reads only this file, with t
 Run: {{what ran, with what inputs, scope and tool; for dev-build, the tasks built and the rounds}}
 Outputs: {{paths on disk, or "pasted" for chat-only output}}
 Contract: {{files}}
+User: {{what the user said around the run, in brief: the request, answers, corrections, re-prompts, verdict; or "nothing"}}
 Verdict: {{n}} confirmed ({{by severity}}), {{n}} dropped, {{n}} process notes
 
 ### Cost
@@ -25,7 +26,7 @@ Read: {{one or two sentences: in line with the work or not, and the cause of any
 - Reason: {{why this matters, in one or two sentences: what goes wrong for the reader of the output or for the next skill in the chain}}
 - How it was found: {{the concrete observation in this run, in order: what the contract says, what the output did, what was compared to see the difference}}
 - Where it recurs: {{a concrete scenario on another repo or spec that would trigger the same deviation, with the input and the wrong output described}}
-- Evidence: {{contract file:line "quoted text"}} against {{output file:line or pasted-output line "quoted text"}}
+- Evidence: {{contract file:line "quoted text"}} against {{output file:line, pasted-output line or the user's words "quoted text"}}
 - Change: {{file:line}}, replace with: {{exact text}}
 - Also touch: {{files, or none}}
 - Confirm by: {{what the next run must show, or the check to run}}

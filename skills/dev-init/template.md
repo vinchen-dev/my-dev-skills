@@ -1,5 +1,5 @@
 <!--
-TEMPLATE FOR docs/standards.md — instructions for dev-standards (delete all template comments in the output):
+TEMPLATE FOR docs/standards.md — instructions for dev-init (delete all template comments in the output):
 - Keep every section heading, even if a section ends up short. `dev-reviewer` refers to these sections by name.
 - The rules below are universal defaults (src: default). Keep, adjust or drop each one based on repo evidence.
 - Add stack-pack rules and repo-specific rules into the matching section, with src tags.
@@ -100,6 +100,6 @@ Expected scale: {{e.g. internal tool, ~50 users / public API, ~1M requests per d
 ## Repo decisions
 
 <!--
-Record decisions the user makes during dev-standards or later. Give each one the date, and the same trailing src tag the rules above use, with the value `user`. Example:
+Record decisions the user makes during dev-init or later. Give each one the date, and the same trailing src tag the rules above use, with the value `user`. Example:
 - Must: New services return result objects instead of throwing. Legacy services are migrated when touched. (decided 2026-09-24)
 -->

@@ -1,6 +1,6 @@
 ---
 name: dev-explorer
-description: Read-only codebase scanner that returns a structured, evidence-based map. Use before planning a change in unfamiliar code, when dev-standards needs the repo's stack, commands and conventions, or whenever a task needs broad code reading that shouldn't fill the main conversation. Never modifies files.
+description: Read-only codebase scanner that returns a structured, evidence-based map. Use before planning a change in unfamiliar code, when dev-init needs the repo's stack, commands and conventions, or whenever a task needs broad code reading that shouldn't fill the main conversation. Never modifies files.
 tools: Read, Grep, Glob, Bash, Skill
 model: haiku
 ---
@@ -34,7 +34,7 @@ If either one fails, finish the scan anyway. `obsidian-recall` will tell you to 
 
 ## Standards mode
 
-Used by `dev-standards`. Return exactly these sections:
+Used by `dev-init`. Return exactly these sections:
 
 ```markdown
 ## Stack

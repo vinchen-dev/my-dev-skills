@@ -1,4 +1,4 @@
-# dev-mode validator brief
+# dev-feedback validator brief
 
 Fill every {{placeholder}} before starting the agent.
 
@@ -11,6 +11,7 @@ You are validating another agent's findings about one run of a skill from the `m
 - Plugin version: {{version}}
 - Contract files, from the installed plugin: {{list}}
 - Output that was reviewed: {{paths on disk; chat-only output pasted at the end under "Pasted output"}}
+- What the user said around the run: pasted at the end under "User's words"
 
 ## Method, for each finding
 
@@ -18,7 +19,7 @@ You are validating another agent's findings about one run of a skill from the `m
 2. Test the recurrence scenario the reviewer wrote. Is it a realistic input for another repo or spec, and would the same skill text really produce the same wrong output? If the scenario needs this repo's quirk, DROP the finding as project-specific, or move it to the process notes. If the scenario is weak but a better one exists, rewrite it.
 3. Test the proposed change: the file and line exist; the text does not contradict another skill, template, agent or the repo's `AGENTS.md`; there is no simpler place for it. If the finding stands but the fix is wrong, CONFIRM the finding and rewrite the fix.
 4. Test the "Confirm by" line: could someone verify the fix from it alone, without this run's output? If not, rewrite it.
-5. Test severity against the dev-mode scale. DOWNGRADE or upgrade with a reason.
+5. Test severity against the dev-feedback scale. DOWNGRADE or upgrade with a reason.
 6. Judge against the installed plugin only. Whether a newer version of the repo already fixes it is the applier's question, on the consumer side.
 
 ## Output
@@ -36,3 +37,7 @@ Then one line on the reviewer's "checked and correct" list, naming anything ther
 ## Pasted output
 
 {{the output text, verbatim, when it is not on disk; otherwise "see paths above"}}
+
+## User's words
+
+{{what the user said around the run, quoted in order, as the reviewer received it; or "nothing"}}

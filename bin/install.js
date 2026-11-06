@@ -361,6 +361,33 @@ function isOurs(dest, stat) {
   }
 }
 
+// Removes our links or marked copies of skills this version no longer ships, such as a renamed skill.
+// Anything else in the folder belongs to another tool or to the user, so it is skipped without a word.
+function pruneRetired(dir, ownership) {
+  if (!fs.existsSync(dir)) return;
+  const current = new Set(fs.readdirSync(path.join(root, "skills")));
+  const ourSkillDirs = [root, sharedDir].map((base) => path.join(base, "skills") + path.sep);
+  for (const name of fs.readdirSync(dir)) {
+    if (current.has(name)) continue;
+    const target = path.join(dir, name);
+    const stat = fs.lstatSync(target, { throwIfNoEntry: false });
+    let ours = false;
+    if (stat && ownership === "copy") ours = !stat.isSymbolicLink() && isOurCopy(target);
+    else if (stat && stat.isSymbolicLink()) {
+      try {
+        const linked = path.resolve(path.dirname(target), fs.readlinkSync(target));
+        ours = ourSkillDirs.some((d) => linked.startsWith(d));
+      } catch {}
+    }
+    if (!ours) continue;
+    if (dryRun) log(`  remove retired ${target}`);
+    else {
+      fs.rmSync(target, { recursive: true, force: true }); // unlinks a symlink without touching its target
+      log(`  removed retired ${target}`);
+    }
+  }
+}
+
 // Copies just what a plugin needs to load (manifest, skills, agents, hooks)
 // into the one durable shared location, once per run even though both tools
 // may need it. Safe to re-run: it replaces whatever was there before.
@@ -394,6 +421,7 @@ function linkSelf(tool) {
     for (const name of fs.readdirSync(path.join(root, "skills"))) {
       linkOne(path.join(root, "skills", name), path.join(home, ".agents", "skills", name));
     }
+    pruneRetired(path.join(home, ".agents", "skills"), "symlink");
   }
   return { method: "link" };
 }
@@ -415,6 +443,7 @@ function sharedSelf(tool) {
       for (const name of fs.readdirSync(path.join(root, "skills"))) {
         linkOne(path.join(sharedDir, "skills", name), path.join(home, ".agents", "skills", name));
       }
+      pruneRetired(path.join(home, ".agents", "skills"), "symlink");
     }
     return { method: "shared" };
   } catch (err) {
@@ -432,6 +461,7 @@ function copyFallback(tool) {
   for (const name of fs.readdirSync(skillsSrc)) {
     copyDir(path.join(skillsSrc, name), path.join(c.userSkillsDir, name));
   }
+  pruneRetired(c.userSkillsDir, "copy");
   if (c.userAgentsDir) {
     const agentsSrc = path.join(root, "agents");
     for (const file of fs.readdirSync(agentsSrc)) {
@@ -478,9 +508,13 @@ function uninstallSelf(tool) {
   };
   if (method === "copy") {
     for (const name of fs.readdirSync(path.join(root, "skills"))) removeTarget(path.join(c.userSkillsDir, name), "marker");
+    pruneRetired(c.userSkillsDir, "copy");
   } else if (method === "link" || method === "shared") {
     if (tool === "claude") removeTarget(path.join(c.userSkillsDir, pkg.name), "symlink");
-    else for (const name of fs.readdirSync(path.join(root, "skills"))) removeTarget(path.join(home, ".agents", "skills", name), "symlink");
+    else {
+      for (const name of fs.readdirSync(path.join(root, "skills"))) removeTarget(path.join(home, ".agents", "skills", name), "symlink");
+      pruneRetired(path.join(home, ".agents", "skills"), "symlink");
+    }
   }
   if (c.userAgentsDir && fs.existsSync(c.userAgentsDir)) {
     for (const file of fs.readdirSync(path.join(root, "agents"))) {
@@ -616,7 +650,7 @@ for (const [tool, s] of Object.entries(summary)) {
 if (!withMatt && Object.values(summary).some((s) => s.matt === "missing")) {
   log(`\nMatt Pocock's skills are required by dev-build and dev-reviewer. Re-run this installer with --matt to add them.`);
 }
-log("\nNext: run dev-standards in each repo to generate AGENTS.md and docs/standards.md.");
+log("\nNext: run dev-init in each repo to generate AGENTS.md and docs/standards.md.");
 
 if (!dryRun) {
   fs.writeFileSync(
