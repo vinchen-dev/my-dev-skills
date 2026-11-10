@@ -147,7 +147,7 @@ Review `AGENTS.md` and `docs/standards.md` once. They are the only per-repo inpu
 
 ## Recommended model setup
 
-The agents inherit the session's model by default. On a complex feature benchmark run on 2026-10-21 and 2026-10-22 (plugin 0.9.3 and 0.9.4), this split gave the same quality as running everything on Opus at about half the cost and two thirds of the time:
+On a complex feature benchmark run on 2026-10-21 and 2026-10-22 (plugin 0.9.3 and 0.9.4), this split gave the same quality as running everything on Opus at about half the cost and two thirds of the time:
 
 | Step | Model | Effort | Mean cost per run on 0.9.4 (2026-10-22), complex / easy / average |
 |---|---|---|---|
@@ -157,7 +157,9 @@ The agents inherit the session's model by default. On a complex feature benchmar
 | `dev-verifier` | Sonnet 5.5 | high | $1.62 (two passes) / $0.32 / $0.52 |
 | `dev-reviewer` | Opus 5.5 | high | |
 
-Plan in Opus, then start `dev-build` in a new session on Sonnet; the plan and build models are whatever the session runs. On 0.9.4 every run finished `DONE`: four complex, two easy, two average. Two things not to lower: the plan's effort, because Opus at high missed a consumer the plan had to name in two of four runs where xhigh never did, and the build's effort, because Sonnet at medium skipped the re-check after a fix round. To pin the two agents, set `model:` and `effort:` in the frontmatter of `agents/dev-reviewer.md` and `agents/dev-verifier.md` in your copy; both keys pass the plugin validator.
+Plan in Opus, then start `dev-build` in a new session on Sonnet; the plan and build models are whatever the session runs. On 0.9.4 every run finished `DONE`: four complex, two easy, two average. Two things not to lower: the plan's effort, because Opus at high missed a consumer the plan had to name in two of four runs where xhigh never did, and the build's effort, because Sonnet at medium skipped the re-check after a fix round.
+
+`dev-build` applies its part of the split when it starts. In Claude Code, on any model other than Sonnet it shows the switch (`/model sonnet`, then `/effort high`) and waits until you switch or say continue, and it starts `dev-verifier` on Sonnet and `dev-reviewer` on Opus, both at high effort, through the Agent tool, falling back to the session's model when one is not available. Its choice overrides a `model:` in the agents' frontmatter; to change the split, edit the Models section of `skills/dev-build/SKILL.md` in your copy. In Codex, which has no benchmark yet, it recommends your account's workhorse model at high reasoning effort, read from Codex's own model list (`~/.codex/models_cache.json`), so it never names a model you cannot pick, and the verify and review run inline on that model. `dev-plan` runs on whatever the session runs, and `dev-explorer` is pinned to Haiku.
 
 
 ## Repo layout

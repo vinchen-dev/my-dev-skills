@@ -1,6 +1,10 @@
 # Changelog
 
-## 0.11.0 — unreleased
+## 0.12.0 — unreleased
+
+- `dev-build` recommends the tuned models when it starts, for the tool it runs in. In Claude Code, on any model other than Sonnet it shows `/model sonnet` and `/effort high` and waits until you switch or say continue, and it starts `dev-verifier` on Sonnet and `dev-reviewer` on Opus, both at high effort, itself; when a model is not available to you, that agent falls back to the session's model. In Codex it recommends your account's workhorse model at high reasoning effort, taken from Codex's own model list so it never names a model you cannot pick. The Codex pick is not benchmarked yet.
+
+## 0.11.0 — 2026-11-06
 
 - `dev-standards` is renamed `dev-init`. Type `/dev-init` where you typed `/dev-standards`; it does the same job and writes the same `AGENTS.md`, `CLAUDE.md` and `docs/standards.md`. Files it already wrote need no change: a re-run finds them and goes into update mode as before, and the generated-by comment at the top of `AGENTS.md` now names `dev-init`.
 - The installer removes its own links and marked copies of skills this version no longer ships, so updating a Codex install no longer leaves a dangling `dev-standards` link or a stale copy behind. Entries it did not create are left alone. `uninstall` removes them too.
