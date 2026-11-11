@@ -33,9 +33,10 @@ If the repo has a changelog (`CHANGELOG.md` or similar), add an entry under the 
 
 ### 4. Write the PR description
 
-If Matt Pocock's `pr` skill is installed, use it to write the body, giving it the spec, plan and verify report as inputs. Otherwise use the PR title and body template in `../dev-commit-pr/SKILL.md` (Summary, Changes, Testing, Deploy notes, Out of scope), filled from these sources:
+If Matt Pocock's `pr` skill is installed, use it to write the body, giving it the spec, plan and verify report as inputs. Otherwise use the PR title and body template in `../dev-commit-pr/SKILL.md` (Summary, Affected features, Changes, Testing, Deploy notes, Out of scope), filled from these sources:
 
 - Summary and the Spec line: the plan's summary, and the spec's goal when the summary does not state it.
+- Affected features: the screens and endpoints the plan's Affected areas table and the diff show changing, by on-screen name and route.
 - Changes: the diff since the plan's `Base:`, grouped by area, with notable decisions from the plan's Decisions section.
 - Testing: gate results from `verify-report.md`, the criteria counts from the build report's `Criteria:` line (count the verify report's Status column when there is no build report), and manual checks the user reported.
 - Deploy notes: permissions, config keys, migrations or backfills the change needs, or "None".

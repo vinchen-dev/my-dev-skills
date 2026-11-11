@@ -1,6 +1,20 @@
 # Changelog
 
-## 0.12.0 — unreleased
+## 0.13.0 — unreleased
+
+- `dev-init` counts logging and the repo's own helpers around built-ins (a logger, an HTTP client, date, id or env helpers) against direct calls, across the tree and in the last three months, and asks which one new code uses when the helper's share is rising. `docs/standards.md` gains a Must to go through the helper, so the plan and the reviews stop accepting the raw call.
+- `dev-build` asks once, before the first verifier, when the listed `test` command stops without a result for a reason outside the change (out of memory, a missing variable, a stale config): correct the command in `AGENTS.md`, or accept a test gate with no result. The report's Gates line carries only the verifier's results; a run of the build's own goes under Still open.
+- `dev-commit-pr` reads the current branch for the ticket id on every run and never takes one from earlier work in the conversation. Its commands use a defined `<merge-base>` and include staged work, and Out of scope reads the plan's Out of scope and follow-ups section.
+- PR bodies and ticket summaries gain an **Affected features** section, which names each screen as the app shows it (menu > page). The PR adds the route and the changed endpoints; the ticket keeps routes and files out. `dev-ship` fills the same section.
+- `dev-commit-pr` Testing is a few-minute walk, not a copy of the plan's Test strategy rows: behaviours checked in one pass on one screen merge into one step, a race or failure variant becomes a clause, and unchanged paths stay out.
+- After a revision, `dev-commit-pr` and `dev-ticket-summary` give the whole text again, so the latest reply is the one to copy.
+- `dev-ticket-summary` keeps a hedge: a point the investigation called probable stays marked assumed, and "reproduced" is used only for a failure re-run on purpose, otherwise "observed". When the Fix lists separate measures, each says what it addresses.
+- `dev-reply` promises only what the fix is expected to do, naming the cases that can still fail, and a claim the session marked assumed keeps that mark or stays out.
+- `dev-plan` treats a change to when a value is refreshed as a change to its readers, checks every per-file Must such as the size limit against each file it touches, and edits the spec only as you answered: a spec statement the code disproves goes into its questions with a recommended wording.
+- `dev-explorer` searches as wide as the claim before writing "none" or a count and names the pattern it used, and cites line numbers of the file, never of a slice of it.
+- `dev-spec-explain` covers requirements with no on-screen effect, such as a server calculation or an index, and leaves no requirement out. A name the code cannot place stays in quotes with a gap rather than under the page the spec discusses most, pages are named by the label the screen shows, and another copy of the spec found in the repo is not a source.
+
+## 0.12.0 — 2026-11-10
 
 - `dev-build` recommends the tuned models when it starts, for the tool it runs in. In Claude Code, on any model other than Sonnet it shows `/model sonnet` and `/effort high` and waits until you switch or say continue, and it starts `dev-verifier` on Sonnet and `dev-reviewer` on Opus, both at high effort, itself; when a model is not available to you, that agent falls back to the session's model. In Codex it recommends your account's workhorse model at high reasoning effort, taken from Codex's own model list so it never names a model you cannot pick. The Codex pick is not benchmarked yet.
 

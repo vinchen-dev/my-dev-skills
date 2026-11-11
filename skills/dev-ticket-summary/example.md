@@ -10,6 +10,11 @@ Support found accounts still signed in the next morning, well past the 30-minute
 limit. On shared machines that leaves someone else's session open, so this is a security
 exposure, not just a settings bug.
 
+**Affected features**
+- Dashboard, and any other page that refreshes itself in the background: a tab left open
+  is never logged out for being idle.
+- Not affected: the login screen and the remember-me option.
+
 **Root cause**
 Nothing distinguishes a user action from a background request. The idle timer resets on
 every authenticated HTTP call, and an open dashboard polls for notifications every 60

@@ -28,9 +28,10 @@ A local file (PDF, DOCX, Markdown, images or screenshots), a URL or Lark documen
    - exact error and prompt text, quoted verbatim
    - how existing records are treated compared with new ones
    - approval, permission and audit-log behaviour
+   - changes with no on-screen effect, such as a calculation, a database index, a data fix or a scheduled job: what each one does, in plain words, and who carries it out when the spec says, such as the release, the DBA or operations
    - anything the spec explicitly says is unchanged, on this page or others
 3. **Detect gaps.** Empty headings, sections that end mid-sentence, roles or permissions named but never defined, rules that contradict each other, messages described but not written out. List them as decisions still to be made. Never fill a gap with a guess. A screenshot with no text beside it, such as a log entry under an empty heading, is spec content, not a gap: report what it shows as an item in its own group, say it comes from a screenshot, and list only what neither text nor screenshot answers as a gap.
-4. **Check the codebase only to confirm a name** the spec abbreviates, for example which page "Limits" refers to. Report nothing you find in code.
+4. **Check the codebase only to confirm a name** the spec abbreviates, for example which page "Limits" refers to, and use the label the screen shows. Report nothing else you find. When neither the spec nor the check settles which screen a name belongs to, or what the screen calls it, do not file it under the page the spec discusses most: keep the spec's name in quotes, describe it without a page, and add which screen it is on, or what the screen calls it, to the gaps. Another copy of the spec in the repo, such as a longer spec.md, is not the document you were given: take no content from it, and a name it uses is still the spec's wording, not the screen's label.
 5. **Group the changes by how related they are**, then split each group's changes into review items using the rules below.
 6. **Write the output** with the template below, then stop. No offer to plan or implement.
 
@@ -84,7 +85,7 @@ Why this shape: a group is one packet of related work a reader reviews, tests or
 <Empty sections, undefined permissions, contradictions, missing message text, phrased as what still needs deciding.>
 ```
 
-The Affected features list is the reader's scope check: one line per feature by its on-screen name, no detail. A group may cover several listed features when their changes are small and related, and a large feature may span more than one group, so the list and the headings need not match one to one.
+The Affected features list is the reader's scope check: one line per feature by its on-screen name, no detail. A group may cover several listed features when their changes are small and related, and a large feature may span more than one group, so the list and the headings need not match one to one. When part of the change has no screen, such as database work, a data fix, a scheduled job or a deploy step, list it by what the team calls that work and who does it, for example "Database work (DBA)".
 
 A worked example is in `example.md` in this skill's folder. Read it the first time you use the skill, or whenever you are unsure how finely to split.
 
@@ -93,13 +94,14 @@ A worked example is in `example.md` in this skill's folder. Read it the first ti
 - Lead with the summary. Everything else goes under it.
 - Each item must stand on its own. If the reader has to look at another item to understand this one, the split is wrong.
 - Use on-screen labels ("Min Per Transaction"), never identifiers (`minSingleLimit`).
-- No file paths, function names, route names or database terms.
+- No file paths, function names, route names or database terms. When the spec is about a technical object the reader must act on or check, such as an index the DBA builds, use the spec's plain word for it, say in plain words what it does the first time it appears, and describe everything else by its effect.
 - Quote error and prompt messages exactly as the spec writes them.
 - Say who is affected: new records against existing ones, requester against approver.
 - State boundary behaviour in words: "equal values are fine", "blank skips the check".
 - One idea per sentence. No em-dashes, no arrows, no chains of parentheses.
 - Aim for 250 to 400 words plus the table, shorter when the spec is small.
 - Add nothing the spec does not contain. Flag ambiguity instead.
+- Leave nothing out either. Every requirement and acceptance criterion that changes what the system does appears in an item or in What does not change, including ones with no screen, written as what changes, for example "The totals are now added up from the amount and fee alone". Requirements about how the code is written or tested, such as a unit test or a refactor, stay out. Never mention "the code change" or "the fix" without an item that says what it is.
 - Do not end with a question such as "want me to plan this?".
 
 ## Signs you have drifted

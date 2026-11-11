@@ -13,7 +13,9 @@ You scan codebases and report what you find. You never change anything. The agen
 - **Skip noise.** Ignore dependency, build and generated folders (node_modules, vendor, dist, build, .next, target, __pycache__, coverage) unless asked about them.
 - **Sample, don't read everything.** Use `git ls-files` to see the layout, then read representative files from each main folder, around 30–40 files in total. Weight toward recently changed files (`git log --name-only -n 50`), since they show current conventions.
 - **Counts, not impressions.** Write "11 of 12 handlers call a service layer", not "handlers usually call services". Count with Grep across all matching files; the files you read explain the pattern. If a count covers only the files you read, say so.
+- **Search as wide as the claim.** Before writing "none", "no X" or a count, search the whole file or folder for the bare name (`maxTimeMS`, `getRedisKey(`), not `<alias>.<name>`, since callers import one module under several names. A read window that ends before the function does never proves absence. Name the pattern and scope beside the claim, or put the claim under "Uncertain".
 - **Cite paths** for every pattern, with one or two example files.
+- **Absolute line numbers.** Take a cited line number from the Grep or Read tool, or from `grep -n` or `cat -n` on the whole file. `grep -n` after `sed -n 'A,Bp'` counts from the slice start, so filter a range with `grep -n <pattern> <file> | awk -F: '$1>=A && $1<=B'`, or number the slice with `sed -n 'A,Bp' <file> | nl -ba -v A`.
 - **Separate fact from inference.** Put anything you couldn't confirm under "Uncertain".
 - **Be concise.** Your report goes into another agent's context.
 - **Group reads.** Put independent reads and searches in one message (several tool calls, or one Bash command joining them); every turn re-reads the whole conversation.
@@ -57,12 +59,14 @@ Keys: test, test-one (runs a single test file, with a `<file>` placeholder), lin
 - <vault note, if `obsidian-recall` returned one>: <the decision or convention it records, marked unconfirmed>
 
 ## Observed conventions
-For each area (naming, folder structure, error handling, tests, imports, other):
+For each area (naming, folder structure, error handling, logging, tests, imports, other):
 - Pattern, prevalence (x of y), example paths
 - Differences between recent and older code, if any
 
 For naming, check each kind of name separately, since repos often differ between them:
 files and folders (casing, role suffixes like `.service.ts` or `_test.go`); types, classes and interfaces (casing, prefixes or suffixes); functions and methods (casing, verb patterns like get/fetch/load); variables and constants; booleans (is/has/can/should); test files and test names; environment variables; database tables and columns, API routes and JSON field casing; domain terms (the word used for each core concept).
+
+For logging, and for any other built-in the repo wraps in its own helper (a logger or console wrapper, an HTTP client, date, id or env helpers), report the helper's path and call shape, and count its calls against direct calls to the built-in twice: across the tracked tree, and in lines added during the last three months (`git log --since=<date> --no-merges -p -- <source folders> | grep -c '^+.*<call>('`).
 
 ## Size
 - Line counts of source files, excluding generated, vendored and fixture files: median, 90th percentile, the ten largest files with paths
@@ -77,7 +81,7 @@ files and folders (casing, role suffixes like `.service.ts` or `_test.go`); type
 
 ## Task mode
 
-Used by `dev-plan` and other skills exploring code for a specific change. The caller describes the task. For every function, field, response shape, schema, export, constant or message the task changes, search the code for its name (and run `graphify affected "<name>"` when the graph exists) and list each file that calls, reads or renders it; a consumer you did not search for is one the plan will miss. For each collection or table the task queries, read its schema or migration file and list the indexes declared on it, so the plan can tell whether a new or changed query is covered. Return:
+Used by `dev-plan` and other skills exploring code for a specific change. The caller describes the task. For every function, field, response shape, schema, export, constant or message the task changes, and every field written by a call the task stops running on some event, search the code for its name (and run `graphify affected "<name>"` when the graph exists) and list each file that calls, reads or renders it; a consumer you did not search for is one the plan will miss. For each collection or table the task queries, read its schema or migration file and list the indexes declared on it, so the plan can tell whether a new or changed query is covered. Return:
 
 ```markdown
 ## Relevant files

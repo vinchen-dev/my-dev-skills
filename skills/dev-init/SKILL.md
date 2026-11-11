@@ -27,7 +27,7 @@ Delegate the scan to the `dev-explorer` agent in **standards mode** if it is ava
 - **Tool configs** (linters, formatters, type checker or compiler settings, .editorconfig): what is already enforced automatically.
 - **CI config** (.github/workflows, .gitlab-ci.yml, etc.): the commands that actually run. Trust these over README instructions.
 - **Written conventions**: README, CONTRIBUTING, ADRs, glossary or domain docs, existing agent instruction files.
-- **Code sample**: representative files from each main folder, weighted toward recently changed files. Note naming, folder structure, error handling, test location and style, import patterns — with counts, not impressions.
+- **Code sample**: representative files from each main folder, weighted toward recently changed files. Note naming, folder structure, error handling, logging, test location and style, import patterns — with counts, not impressions. Where the repo wraps a built-in in its own helper (a logger or console wrapper, an HTTP client, date, id or env helpers), count calls to the helper against direct calls to the built-in, in lines added during the last three months and across the tree. A helper whose share of new calls is rising is a migration in progress even while direct calls are the majority, so step 5 asks which one new code uses.
 - **Git history**: commit message format, and whether recent code follows different conventions from older code.
 - **Repo shape**: single app or monorepo, plus generated, vendored and migration paths.
 

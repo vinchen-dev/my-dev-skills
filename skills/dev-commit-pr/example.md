@@ -35,6 +35,11 @@ Adds a per-customer **Allowed Transfer Range** and blocks any Transfer Limit out
 
 Spec: `docs/features/transfer-range/spec.md`
 
+## Affected features
+- **Customer > Update** (`/customer/edit`) and **Customer > Batch Edit** (`/customer/batch-edit`): the Allowed Transfer Range fields.
+- **Approve page** (`/approval`): the new **Edit Transfer Range** item.
+- **API:** `PATCH /customer/:id`: refuses a limit outside the range.
+
 ## Changes
 - **Validation:** new middleware runs before the existing limit check on create, update and batch edit (range validity, then limit-in-range).
 - **Approval:** new type and permission `ApprovalPage/EditTransferRange`. Range changes on existing customers create a proposal; batch edit creates one for all selected customers. A pending limit or range item blocks new changes for that customer. Approval re-checks live values.

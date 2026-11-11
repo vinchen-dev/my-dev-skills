@@ -39,6 +39,7 @@ These standards define what good code looks like in this repo. They are used whe
 ## Code design
 
 - Must: Don't duplicate logic that already exists. Reuse it, or extract it if it's needed in more places. <!-- src: default -->
+- Must: New code goes through the repo's own helper where one wraps a built-in, not the built-in directly: {{each helper, its path and the built-in it replaces, plus any folders where the built-in stays allowed, e.g. `logger.error` from `src/lib/logger.ts` for `console.error`}}. {{Delete this line when the scan found no such helper or the user chose the built-in.}} <!-- src: {{code <counts> or user}} -->
 - Must: No dead code, commented-out code, or leftover debug output. <!-- src: default -->
 - Prefer: Small functions that do one thing, with early returns over deep nesting. <!-- src: default -->
 - Prefer: Clear, explicit code over clever code. <!-- src: default -->
