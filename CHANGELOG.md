@@ -1,6 +1,10 @@
 # Changelog
 
-## 0.13.0 — unreleased
+## 0.14.0 — unreleased
+
+- `dev-build` opens every build with the models it will use, one line per role with its effort: the build and fix rounds, the verifier and the reviewer. On the tuned model it goes straight on. On any other, or when it cannot tell, it asks which model builds through the question tool where there is one, the tuned model first and marked recommended, the current model second; before, the verifier and reviewer models were named only on a mismatch and the choice was a sentence to answer.
+
+## 0.13.0 — 2026-11-11
 
 - `dev-init` counts logging and the repo's own helpers around built-ins (a logger, an HTTP client, date, id or env helpers) against direct calls, across the tree and in the last three months, and asks which one new code uses when the helper's share is rising. `docs/standards.md` gains a Must to go through the helper, so the plan and the reviews stop accepting the raw call.
 - `dev-build` asks once, before the first verifier, when the listed `test` command stops without a result for a reason outside the change (out of memory, a missing variable, a stale config): correct the command in `AGENTS.md`, or accept a test gate with no result. The report's Gates line carries only the verifier's results; a run of the build's own goes under Still open.

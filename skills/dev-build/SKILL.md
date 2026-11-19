@@ -27,12 +27,23 @@ Start dev-build in a new session after `dev-plan`: everything it needs is in `pl
 
 ## Models
 
-Before preflight, recommend the build's models for the tool you run in, naming only models that tool can use, and check the session against them. The split comes from the complex-feature benchmark in the README's Recommended model setup, run in Claude Code; Codex has no benchmark yet, so its pick fills the same role.
+Before preflight, list the models the build will use and recommend the tuned ones for the tool you run in, naming only models that tool can use, and check the session against them. The split comes from the complex-feature benchmark in the README's Recommended model setup, run in Claude Code; Codex has no benchmark yet, so its pick fills the same role.
 
 - **Claude Code**: the session runs on Sonnet at high effort, set with `/model sonnet` and `/effort high`. Whatever the session runs on, start the `dev-verifier` on `sonnet` and the `dev-reviewer` on `opus`, both at effort `high`, through the Agent tool's model and effort options. When the tool has no such option or refuses the model, start the agent again without it so it inherits the session's model, and tell the user once which agent ran on what.
 - **Codex**: the session runs on the account's workhorse model at `high` reasoning effort, set with `/model`. Take it from `$CODEX_HOME/models_cache.json`, by default `~/.codex/models_cache.json`: of the models whose `visibility` is `list`, the one with the lowest `priority` whose description calls it a workhorse, or the lowest-priority listed model when none does, provided its `supported_reasoning_levels` include `high`. Never name a model that file does not list; without the file, recommend the workhorse model `/model` offers, at high, without a name. The verify and review run inline on the same model, as the fallback below says, so there is nothing else to set.
 
-When the session already runs on the recommended model, say so in one line with the effort to keep, since you cannot see the effort, and go on to preflight. Otherwise, and whenever you cannot tell which model the session runs on, as in Codex, give the recommendation with its commands and wait until the user switches and says continue, or says continue on the current model. For example: `This session runs on Opus 5.5. The build is tuned for Sonnet at high effort: type /model sonnet and /effort high, then say continue, or say continue to build on Opus 5.5. The verifier runs on Sonnet and the reviewer on Opus either way.` A resumed build checks again, because a new session may run on a different model.
+Open every build with the models it will use, one line per role with its model and effort: the build and fix rounds, the verifier, the reviewer. In Codex that is one line, since the verify and review run inline. For example:
+
+```
+Models for this build
+- Build and fix rounds: this session, Opus 5.5 (tuned: Sonnet at high effort)
+- Verifier: Sonnet at high effort
+- Reviewer: Opus at high effort
+```
+
+When the session already runs on the tuned model, add the effort to keep to its line, since you cannot see the effort, and go on to preflight without asking.
+
+Otherwise, and whenever you cannot tell which model the session runs on, as in Codex, stop and ask which model builds. Ask through your question tool when the tool you run in has one (`AskUserQuestion` in Claude Code), and in prose when it has none. Give two choices, the tuned one first and marked recommended. The first switches to the tuned model and carries the commands to type, in Claude Code `/model sonnet` and `/effort high`: wait until the user has switched and says continue, then check the session again. The second builds on the current model, named when you know it: go on to preflight. Say in the question that the verifier and reviewer run on their own models either way. A resumed build lists and checks again, because a new session may run on a different model.
 
 ## Preflight
 
