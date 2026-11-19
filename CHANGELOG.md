@@ -1,6 +1,10 @@
 # Changelog
 
-## 0.14.0 — unreleased
+## 0.15.0 — unreleased
+
+- `dev-build` asks the user to confirm the models on every build, not only when the session is on another model. It lists the build, verifier and reviewer models with their effort and offers the tuned split first and recommended, then the tuned agents with the build on the current model, then everything on the session's model; models the user names instead are used for the roles they name.
+
+## 0.14.0 — 2026-11-19
 
 - `dev-build` opens every build with the models it will use, one line per role with its effort: the build and fix rounds, the verifier and the reviewer. On the tuned model it goes straight on. On any other, or when it cannot tell, it asks which model builds through the question tool where there is one, the tuned model first and marked recommended, the current model second; before, the verifier and reviewer models were named only on a mismatch and the choice was a sentence to answer.
 
