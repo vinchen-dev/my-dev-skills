@@ -40,14 +40,19 @@ The first cycle checks everything: the verifier proves every row of the plan's t
 **Claude Code:**
 
 ```bash
+claude plugin install my-dev-skills --marketplace vinchen-dev/my-dev-skills
+claude plugin install mattpocock-skills --marketplace mattpocock/skills    # required, see below
+```
+
+Each line adds the marketplace and installs from it in one step, so there is nothing to clone yourself. On a Claude Code whose `plugin install` has no `--marketplace` option, use the two steps below, which are also the form inside a session with `/plugin marketplace add` and `/plugin install`:
+
+```bash
 claude plugin marketplace add vinchen-dev/my-dev-skills
 claude plugin install my-dev-skills@my-dev-skills
 
-claude plugin marketplace add mattpocock/skills          # required, see below
+claude plugin marketplace add mattpocock/skills
 claude plugin install mattpocock-skills@mattpocock
 ```
-
-Or the same from inside a session with `/plugin marketplace add` and `/plugin install`.
 
 **Codex:**
 
@@ -186,11 +191,11 @@ Add the repo folder as a local marketplace in Claude Code and install from it, s
 
 ## Verified
 
-Checked against the real tools (October 2026):
+Checked against the real tools (October 2026; the two install bullets re-checked in November 2026 on Claude Code 2.1.322 and Codex 0.162):
 
-- `claude plugin validate` passes for the plugin manifest, marketplace, skills and agents; a real marketplace install from the local path shows 8 skills, 3 agents and 2 hooks.
+- `claude plugin validate` passes for the plugin manifest, marketplace, skills and agents; a real marketplace install from the local path shows 10 skills, 3 agents and 2 hooks.
 - The `claude plugin marketplace add / install / update / uninstall / list` commands used by the installer exist with that syntax.
-- Installing from the published GitHub repo verified on both tools: `claude plugin marketplace add` plus `claude plugin install` loads 8 skills, 3 agents and 2 hooks, and `codex plugin marketplace add` plus `codex plugin add` installs on Codex. Claude Code clones over SSH first and falls back to HTTPS, so no GitHub SSH key is needed.
+- Installing from the published GitHub repo verified on both tools: `claude plugin marketplace add` plus `claude plugin install` loads 10 skills, 3 agents and 2 hooks, as does the one-command `claude plugin install --marketplace` form, and `codex plugin marketplace add` plus `codex plugin add` installs on Codex. Claude Code clones over SSH first and falls back to HTTPS, so no GitHub SSH key is needed.
 - Matt's marketplace is `mattpocock`, his plugin `mattpocock-skills` (1.2.3 at the time). Every skill this workflow uses is in that release except `pr`, which is on his `main` branch after the 1.2.3 tag; his manifest pins the version, so `plugin update` won't fetch it until he bumps it, and `dev-ship` falls back to its own PR structure when `pr` is absent.
 - Matt's skills resolve from the plugin as `mattpocock-skills:<name>`, for example `mattpocock-skills:tdd`.
 - Codex 0.145 plugin commands match `CONFIG` (`plugin add`, `plugin remove`, `plugin list --json`, `plugin marketplace add`); the `.agents/plugins/marketplace.json` fields match Codex's bundled marketplaces; Codex user skills are scanned in both `~/.agents/skills` (documented) and `~/.codex/skills` (where the `skills` CLI writes).
@@ -199,7 +204,7 @@ Checked against the real tools (October 2026):
 
 ## Still to confirm
 
-- Publication: the GitHub repository is live and both marketplace routes are verified from it. The npm package is not published, so the `npx` installer cannot be fetched yet.
+- Publication: the GitHub repository is live, and both marketplace routes and the installer's `npx -y github:` form are verified from it. The npm package is not published, so the short `npx my-dev-skills` form does not work yet.
 - Codex subagent support: `dev-verifier` and `dev-reviewer` are Claude Code agents. In Codex, `dev-build` runs `dev-verify` and the reviewer axes inline.
 
 ## License

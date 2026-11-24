@@ -1,6 +1,10 @@
 # Changelog
 
-## 0.15.0 — unreleased
+## 0.15.1 — unreleased
+
+- README: the Claude Code install is one command per plugin, `claude plugin install my-dev-skills --marketplace vinchen-dev/my-dev-skills`, which adds the marketplace and installs from it; the two-step form stays for a Claude Code without `--marketplace` and for inside a session. The Verified install counts are re-checked at 10 skills, 3 agents and 2 hooks on Claude Code 2.1.322 and Codex 0.162, and Still to confirm no longer says the `npx` installer cannot be fetched: its `github:` form works, and only the short `npx my-dev-skills` waits for the npm package.
+
+## 0.15.0 — 2026-11-19
 
 - `dev-build` asks the user to confirm the models on every build, not only when the session is on another model. It lists the build, verifier and reviewer models with their effort and offers the tuned split first and recommended, then the tuned agents with the build on the current model, then everything on the session's model; models the user names instead are used for the roles they name.
 
